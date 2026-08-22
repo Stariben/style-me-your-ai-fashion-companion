@@ -39,6 +39,8 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onImageUploaded(file_url);
+    } catch {
+      alert(t('photoFormatError'));
     } finally {
       setIsUploading(false);
     }
@@ -53,6 +55,8 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onImageUploaded(file_url);
+    } catch {
+      alert(t('photoFormatError'));
     } finally {
       setIsUploading(false);
     }

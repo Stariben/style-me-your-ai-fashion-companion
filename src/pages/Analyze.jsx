@@ -93,7 +93,6 @@ export default function Analyze() {
     },
     onError: (err) => {
       if (err.message === 'quota_exceeded') return;
-      console.error('Analyse échouée:', err);
     },
   });
 

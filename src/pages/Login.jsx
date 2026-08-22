@@ -9,6 +9,7 @@ import GoogleIcon from "@/components/GoogleIcon";
 import AppleIcon from "@/components/AppleIcon";
 import { motion } from "framer-motion";
 import { useLang } from "@/lib/i18n";
+import { safeReturnTo } from "@/lib/authReturnTo";
 
 // Localized strings per language
 const LOGIN_STRINGS = {
@@ -35,16 +36,17 @@ export default function Login() {
     setLoading(true);
     try {
       await base44.auth.loginViaEmailPassword(email, password);
-      window.location.href = "/analyze";
-    } catch (err) {
-      setError(err.message || "Email ou mot de passe invalide");
+      window.location.href = safeReturnTo();
+    } catch {
+      setError("Email ou mot de passe invalide");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogle = () => base44.auth.loginWithProvider("google", "/analyze");
-  const handleApple = () => base44.auth.loginWithProvider("apple", "/analyze");
+  const dest = safeReturnTo();
+  const handleGoogle = () => base44.auth.loginWithProvider("google", dest);
+  const handleApple = () => base44.auth.loginWithProvider("apple", dest);
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">

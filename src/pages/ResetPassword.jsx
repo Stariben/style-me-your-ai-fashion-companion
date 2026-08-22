@@ -40,8 +40,8 @@ export default function ResetPassword() {
     try {
       await base44.auth.resetPassword({ resetToken, newPassword });
       window.location.href = "/login";
-    } catch (err) {
-      setError(err.message || s.mismatch);
+    } catch {
+      setError("Erreur lors de la réinitialisation");
     } finally {
       setLoading(false);
     }

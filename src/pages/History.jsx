@@ -190,11 +190,16 @@ export default function History() {
   const handleDelete = async () => {
     if (deleteItems.length === 0) return;
     setDeleting(true);
-    await Promise.all(deleteItems.map((item) => base44.entities.AnalysisHistory.delete(item.id)));
-    queryClient.invalidateQueries({ queryKey: ['analysis-history'] });
-    setDeleteItems([]);
-    setDeleteMode(false);
-    setDeleting(false);
+    try {
+      await Promise.all(deleteItems.map((item) => base44.entities.AnalysisHistory.delete(item.id)));
+      queryClient.invalidateQueries({ queryKey: ['analysis-history'] });
+      setDeleteItems([]);
+      setDeleteMode(false);
+    } catch {
+      alert('Erreur lors de la suppression');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const cancelDelete = () => {

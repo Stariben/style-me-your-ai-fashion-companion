@@ -11,6 +11,7 @@ import GoogleIcon from "@/components/GoogleIcon";
 import AppleIcon from "@/components/AppleIcon";
 import { toast } from "@/components/ui/use-toast";
 import { useLang } from "@/lib/i18n";
+import { safeReturnTo } from "@/lib/authReturnTo";
 
 const REGISTER_STRINGS = {
   fr: {
@@ -116,8 +117,8 @@ export default function Register() {
     try {
       await base44.auth.register({ email, password });
       setShowOtp(true);
-    } catch (err) {
-      setError(err.message || s.passwordMismatch);
+    } catch {
+      setError("Erreur lors de la création du compte");
     } finally {
       setLoading(false);
     }
@@ -131,9 +132,9 @@ export default function Register() {
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
       }
-      window.location.href = "/analyze";
-    } catch (err) {
-      setError(err.message || "Invalid verification code");
+      window.location.href = safeReturnTo();
+    } catch {
+      setError("Code de vérification invalide");
     } finally {
       setLoading(false);
     }
@@ -144,8 +145,8 @@ export default function Register() {
     try {
       await base44.auth.resendOtp(email);
       toast({ title: s.resend });
-    } catch (err) {
-      setError(err.message || "Failed to resend code");
+    } catch {
+      setError("Erreur lors du renvoi du code");
     }
   };
 
@@ -213,11 +214,11 @@ export default function Register() {
       }
     >
       <div className="space-y-3 mb-6">
-        <Button variant="outline" className="w-full h-12 text-sm font-medium" onClick={() => base44.auth.loginWithProvider("google", "/analyze")}>
+        <Button variant="outline" className="w-full h-12 text-sm font-medium" onClick={() => base44.auth.loginWithProvider("google", safeReturnTo())}>
           <GoogleIcon className="w-5 h-5 mr-2" />
           {s.google}
         </Button>
-        <Button variant="outline" className="w-full h-12 text-sm font-medium" onClick={() => base44.auth.loginWithProvider("apple", "/analyze")}>
+        <Button variant="outline" className="w-full h-12 text-sm font-medium" onClick={() => base44.auth.loginWithProvider("apple", safeReturnTo())}>
           <AppleIcon className="w-5 h-5 mr-2" />
           {s.apple}
         </Button>
