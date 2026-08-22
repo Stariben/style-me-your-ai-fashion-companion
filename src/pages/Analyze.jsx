@@ -31,24 +31,35 @@ export default function Analyze() {
       window.history.replaceState({}, '', window.location.pathname);
     }
 
+    let cancelled = false;
+    let pollTimer = null;
+
     const loadUser = async () => {
       const user = await base44.auth.me();
+      if (cancelled) return;
       setUserData(user);
 
       if (isPaymentSuccess) {
         let attempts = 0;
         const creditsBefore = user?.analysis_credits || 0;
         const poll = async () => {
+          if (cancelled) return;
           attempts++;
           const u = await base44.auth.me();
+          if (cancelled) return;
           setUserData(u);
           if ((u?.analysis_credits || 0) > creditsBefore) return; // credits updated ✓
-          if (attempts < 12) setTimeout(poll, 2000); // keep polling up to ~24s
+          if (attempts < 12) pollTimer = setTimeout(poll, 2000); // keep polling up to ~24s
         };
-        setTimeout(poll, 2000);
+        pollTimer = setTimeout(poll, 2000);
       }
     };
     loadUser();
+
+    return () => {
+      cancelled = true;
+      if (pollTimer) clearTimeout(pollTimer);
+    };
   }, []);
 
   const freeUsed = userData?.free_analyses_used || 0;

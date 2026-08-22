@@ -12,6 +12,7 @@ const LANG_NAMES = {
 };
 
 Deno.serve(async (req) => {
+  let lock = null;
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -39,7 +40,7 @@ Deno.serve(async (req) => {
       );
     }
     // Acquérir le verrou
-    const lock = await base44.asServiceRole.entities.AnalysisLock.create({
+    lock = await base44.asServiceRole.entities.AnalysisLock.create({
       user_email: user.email,
       locked_at: new Date().toISOString(),
     });
@@ -62,16 +63,18 @@ Deno.serve(async (req) => {
       );
     }
 
-    // ----- 4. DÉCOMPTE ATOMIQUE AVANT L'IA -----
+    // ----- 4. DÉCOMPTE ATOMIQUE AVANT L'IA (via $inc pour éviter les race conditions) -----
     const useFreeAnalysis = paidCredits === 0;
     if (useFreeAnalysis) {
-      await base44.asServiceRole.entities.User.update(currentUser.id, {
-        free_analyses_used: freeUsed + 1,
-      });
+      await base44.asServiceRole.entities.User.updateMany(
+        { id: currentUser.id },
+        { $inc: { free_analyses_used: 1 } }
+      );
     } else {
-      await base44.asServiceRole.entities.User.update(currentUser.id, {
-        analysis_credits: paidCredits - 1,
-      });
+      await base44.asServiceRole.entities.User.updateMany(
+        { id: currentUser.id },
+        { $inc: { analysis_credits: -1 } }
+      );
     }
 
     // ----- 5. APPELS IA (avec refund si échec) -----
@@ -169,16 +172,18 @@ Describe very specifically: the person's facial features (skin undertone, eye co
         imageUrl: imageGen.url,
       });
     } catch (iaError) {
-      // ----- REFUND AUTOMATIQUE SI L'IA ÉCHOUE -----
+      // ----- REFUND AUTOMATIQUE SI L'IA ÉCHOUE (via $inc pour préserver les crédits ajoutés concurremment) -----
       console.error('IA failed, refunding credit:', iaError);
       if (useFreeAnalysis) {
-        await base44.asServiceRole.entities.User.update(currentUser.id, {
-          free_analyses_used: freeUsed,
-        });
+        await base44.asServiceRole.entities.User.updateMany(
+          { id: currentUser.id },
+          { $inc: { free_analyses_used: -1 } }
+        );
       } else {
-        await base44.asServiceRole.entities.User.update(currentUser.id, {
-          analysis_credits: paidCredits,
-        });
+        await base44.asServiceRole.entities.User.updateMany(
+          { id: currentUser.id },
+          { $inc: { analysis_credits: 1 } }
+        );
       }
       // Libérer le verrou après échec IA
       await base44.asServiceRole.entities.AnalysisLock.delete(lock.id);
@@ -188,6 +193,10 @@ Describe very specifically: the person's facial features (skin undertone, eye co
       );
     }
   } catch (error) {
+    // Libérer le verrou si une erreur inattendue survient avant le bloc IA
+    if (lock) {
+      await base44.asServiceRole.entities.AnalysisLock.delete(lock.id).catch(() => {});
+    }
     console.error('analyzeOutfit error:', error);
     return Response.json({ error: 'Une erreur est survenue' }, { status: 500 });
   }

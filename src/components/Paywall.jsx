@@ -44,8 +44,7 @@ export default function Paywall({ onClose }) {
       if (res.data?.url) {
         window.location.href = res.data.url;
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert(t('paywallError'));
     } finally {
       setLoading(null);
