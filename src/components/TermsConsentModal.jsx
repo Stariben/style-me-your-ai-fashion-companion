@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLang } from '@/lib/i18n';
+import { base44 } from '@/api/base44Client';
 import { ShieldCheck } from 'lucide-react';
 
 const CONSENT_KEY = 'styleme_terms_accepted';
@@ -12,15 +13,28 @@ export default function TermsConsentModal({ userId }) {
   const [visible, setVisible] = useState(false);
   const [checked, setChecked] = useState(false);
 
+  const [saving, setSaving] = useState(false);
+
   useEffect(() => {
     if (!userId) return;
-    const accepted = localStorage.getItem(`${CONSENT_KEY}_${userId}`);
-    if (!accepted) setVisible(true);
+    if (localStorage.getItem(`${CONSENT_KEY}_${userId}`)) return;
+    base44.functions.invoke('termsConsent', { action: 'get' }).then((res) => {
+      if (res.data?.accepted) localStorage.setItem(`${CONSENT_KEY}_${userId}`, '1');
+      else setVisible(true);
+    }).catch(() => setVisible(true));
   }, [userId]);
 
-  const handleAccept = () => {
-    localStorage.setItem(`${CONSENT_KEY}_${userId}`, '1');
-    setVisible(false);
+  const handleAccept = async () => {
+    setSaving(true);
+    try {
+      await base44.functions.invoke('termsConsent', { action: 'accept' });
+      localStorage.setItem(`${CONSENT_KEY}_${userId}`, '1');
+      setVisible(false);
+    } catch {
+      alert(t('errorOccurred'));
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -89,7 +103,7 @@ export default function TermsConsentModal({ userId }) {
 
             <Button
               onClick={handleAccept}
-              disabled={!checked}
+              disabled={!checked || saving}
               className="w-full h-12 rounded-2xl text-base font-semibold"
             >
               {t('consentAccept')}

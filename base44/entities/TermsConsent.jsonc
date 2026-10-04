@@ -1,0 +1,48 @@
+{
+  "name": "TermsConsent",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "accepted_at": {
+      "type": "string",
+      "title": "Accepted At (ISO)"
+    },
+    "terms_version": {
+      "type": "string",
+      "title": "Terms Version"
+    }
+  },
+  "required": [
+    "user_id",
+    "accepted_at"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
