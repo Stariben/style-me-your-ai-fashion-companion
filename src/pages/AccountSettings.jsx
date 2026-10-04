@@ -37,7 +37,7 @@ export default function AccountSettings() {
       await base44.functions.invoke('sendContactEmail', { type: 'delete', subject: '', message: '' });
       setDeleted(true);
     } catch (err) {
-      console.error('Delete request failed:', err);
+
       alert(t('contactError') || 'Erreur, réessayez plus tard');
     } finally {
       setIsDeleting(false);
@@ -59,7 +59,7 @@ export default function AccountSettings() {
       setContactSent(true);
       setTimeout(() => { setContactSent(false); setShowContactForm(false); }, 2500);
     } catch (err) {
-      console.error('Contact send failed:', err);
+
       alert(t('contactError') || 'Erreur, réessayez plus tard');
     } finally {
       setSendingContact(false);

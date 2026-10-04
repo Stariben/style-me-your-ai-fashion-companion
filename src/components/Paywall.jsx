@@ -28,10 +28,13 @@ export default function Paywall({ onClose }) {
   ];
 
   const handleBuy = async (packId) => {
-    if (window.self !== window.top) {
-      alert(t('paywallPaymentBlocked'));
+    const isFramed = window.self !== window.top;
+    const checkoutTab = isFramed ? window.open('', '_blank') : null;
+    if (isFramed && !checkoutTab) {
+      alert(t('paywallError'));
       return;
     }
+    if (checkoutTab) checkoutTab.opener = null;
 
     setLoading(packId);
     try {
@@ -41,10 +44,12 @@ export default function Paywall({ onClose }) {
         successUrl: `${origin}/analyze?payment=success`,
         cancelUrl: `${origin}/analyze?payment=cancel`,
       });
-      if (res.data?.url) {
-        window.location.href = res.data.url;
-      }
+      const url = res.data?.url;
+      if (!url) throw new Error('no url');
+      if (checkoutTab) checkoutTab.location.replace(url);
+      else window.location.assign(url);
     } catch {
+      checkoutTab?.close();
       alert(t('paywallError'));
     } finally {
       setLoading(null);

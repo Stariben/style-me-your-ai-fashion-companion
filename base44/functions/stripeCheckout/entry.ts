@@ -18,8 +18,14 @@ Deno.serve(async (req) => {
     if (!pack) return Response.json({ error: 'Pack invalide' }, { status: 400 });
 
     // Anti Open-Redirect: only allow same-origin HTTPS URLs
-    const allowedOrigin = `https://${new URL(req.url).host}`;
-    const isAllowed = (u) => typeof u === 'string' && u.startsWith(allowedOrigin);
+    const callerOrigin = req.headers.get('origin');
+    const isAllowed = (u) => {
+      try {
+        return !!callerOrigin && new URL(u).origin === callerOrigin;
+      } catch {
+        return false;
+      }
+    };
     if (!isAllowed(successUrl) || !isAllowed(cancelUrl)) {
       return Response.json({ error: 'URLs de redirection invalides' }, { status: 400 });
     }
