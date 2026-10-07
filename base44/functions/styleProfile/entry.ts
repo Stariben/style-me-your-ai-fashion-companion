@@ -48,7 +48,13 @@ Deno.serve(async (req) => {
       return Response.json({ profile: saved, generated_at: existing.generated_at, cooldown: true });
     }
 
-    const history = items(await db.AnalysisHistory.filter({ user_id: user.id }, { sort: '-created_date', limit: 10 }));
+    // Older records have no user_id, only created_by_id
+    const history = items(await db.AnalysisHistory.filter(
+      { $or: [{ user_id: user.id }, { created_by_id: user.id }] },
+      '-created_date',
+      10
+    ));
+    console.log(`styleProfile refresh: user=${user.id} history=${history.length}`);
     if (history.length === 0) return Response.json({ error: 'No analysis yet', noHistory: true }, { status: 400 });
 
     const digest = history.map((h: any, i: number) => {
