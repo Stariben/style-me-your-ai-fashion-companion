@@ -47,6 +47,19 @@ Deno.serve(async (req) => {
       user_email: user.email,
       locked_at: new Date().toISOString(),
     });
+    // Verify after creating: only the earliest active lock wins (closes the check-then-create race)
+    const allLocks = await base44.asServiceRole.entities.AnalysisLock.filter({ user_email: user.email });
+    const activeLocks = allLocks
+      .filter((l) => new Date(l.locked_at).getTime() > Date.now() - LOCK_TTL_MS)
+      .sort((a, b) => String(a.created_date).localeCompare(String(b.created_date)) || String(a.id).localeCompare(String(b.id)));
+    if (!activeLocks.length || activeLocks[0].id !== lock.id) {
+      await base44.asServiceRole.entities.AnalysisLock.delete(lock.id).catch(() => {});
+      lock = null;
+      return Response.json(
+        { error: 'Une analyse est déjà en cours. Veuillez patienter.' },
+        { status: 409 }
+      );
+    }
 
     // ----- 3. VÉRIFICATION DU QUOTA CÔTÉ SERVEUR -----
     const currentUser = await base44.asServiceRole.entities.User.get(user.id);

@@ -33,21 +33,27 @@ Deno.serve(async (req) => {
         if (users.length > 0) {
           const user = users[0];
 
-          // Idempotence: check if this session was already processed
-          const processedSessions = user.processed_stripe_sessions || [];
-          if (processedSessions.includes(sessionId)) {
+          // Idempotence (claim-then-verify): create a claim, then only the earliest claim wins.
+          const claim = await base44.asServiceRole.entities.ProcessedStripeSession.create({ session_id: sessionId });
+          const claims = await base44.asServiceRole.entities.ProcessedStripeSession.filter(
+            { session_id: sessionId },
+            { sort: 'created_date', limit: 50 }
+          );
+          const winner = [...claims.items ?? claims].sort(
+            (a, b) => String(a.created_date).localeCompare(String(b.created_date)) || String(a.id).localeCompare(String(b.id))
+          )[0];
+          if (!winner || winner.id !== claim.id) {
+            await base44.asServiceRole.entities.ProcessedStripeSession.delete(claim.id).catch(() => {});
             console.log(`Session ${sessionId} already processed for ${userEmail}, skipping.`);
             return Response.json({ received: true });
           }
 
-          const currentCredits = user.analysis_credits || 0;
-          // Keep only last 50 sessions to prevent unbounded growth
-          const updatedSessions = [...processedSessions, sessionId].slice(-50);
-          await base44.asServiceRole.entities.User.update(user.id, {
-            analysis_credits: currentCredits + credits,
-            processed_stripe_sessions: updatedSessions,
-          });
-          console.log(`Added ${credits} credits to ${userEmail}. Total: ${currentCredits + credits}`);
+          // Atomic increment (no read-modify-write)
+          await base44.asServiceRole.entities.User.updateMany(
+            { id: user.id },
+            { $inc: { analysis_credits: credits } }
+          );
+          console.log(`Added ${credits} credits to ${userEmail}.`);
         }
       } catch (err) {
         console.error('Error updating credits:', err.message);
