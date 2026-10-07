@@ -9,6 +9,7 @@ const MAX_RECOMMENDATIONS = 4;
 const items = (r: any) => (Array.isArray(r) ? r : r?.items ?? []);
 
 Deno.serve(async (req) => {
+  let release = async () => {};
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -18,12 +19,31 @@ Deno.serve(async (req) => {
     const { action, lang } = body;
     const db = base44.asServiceRole.entities;
 
-    const existing = items(await db.StyleProfile.filter({ user_id: user.id }))[0] || null;
-    const saved = existing ? JSON.parse(existing.profile_json || 'null') : null;
+    const loadProfile = async () => {
+      const e = items(await db.StyleProfile.filter({ user_id: user.id }))[0] || null;
+      return { existing: e, saved: e ? JSON.parse(e.profile_json || 'null') : null };
+    };
+    let { existing, saved } = await loadProfile();
 
     if (action === 'get') {
       return Response.json({ profile: saved, generated_at: existing?.generated_at || null });
     }
+    if (action !== 'image' && action !== 'refresh') return Response.json({ error: 'Invalid action' }, { status: 400 });
+
+    // Per-user lock (claim-then-verify, same AnalysisLock as analyzeOutfit): serializes AI generation
+    const LOCK_TTL_MS = 120_000;
+    const locks = db.AnalysisLock;
+    const mine = await locks.create({ user_email: user.email, locked_at: new Date().toISOString() });
+    release = async () => { await locks.delete(mine.id).catch(() => {}); };
+    const activeLocks = items(await locks.filter({ user_email: user.email }))
+      .filter((l: any) => new Date(l.locked_at).getTime() > Date.now() - LOCK_TTL_MS)
+      .sort((a: any, b: any) => String(a.created_date).localeCompare(String(b.created_date)) || String(a.id).localeCompare(String(b.id)));
+    if (activeLocks[0]?.id !== mine.id) {
+      return Response.json({ error: 'Une opération est déjà en cours. Veuillez patienter.' }, { status: 409 });
+    }
+    // Re-read after winning the lock so the cooldown / existing images reflect the latest state
+    ({ existing, saved } = await loadProfile());
+
     if (action === 'image') {
       // Generates one recommendation photo per call (keeps each request short)
       const idx = Number(body.index);
@@ -37,7 +57,6 @@ Deno.serve(async (req) => {
       await db.StyleProfile.update(existing.id, { profile_json: JSON.stringify(saved) });
       return Response.json({ image_url: rec.image_url });
     }
-    if (action !== 'refresh') return Response.json({ error: 'Invalid action' }, { status: 400 });
 
     if (!(await hasAcceptedTerms(base44, user.id))) {
       return Response.json({ error: 'Terms must be accepted', consentRequired: true }, { status: 403 });
@@ -130,5 +149,7 @@ All text fields MUST be written in ${outputLang}, except search_query, model_des
   } catch (error) {
     console.error('styleProfile error:', error);
     return Response.json({ error: 'Une erreur est survenue' }, { status: 500 });
+  } finally {
+    await release();
   }
 });
