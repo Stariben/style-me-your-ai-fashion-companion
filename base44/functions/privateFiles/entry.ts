@@ -3,6 +3,7 @@ import { ownsFile, recordOwner } from '../../shared/fileAccess.ts';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 const MAX_BYTES = 10 * 1024 * 1024;
+const MAX_FILES_PER_USER = 300;
 
 Deno.serve(async (req) => {
   try {
@@ -19,6 +20,10 @@ Deno.serve(async (req) => {
       if (!(file instanceof File)) return Response.json({ error: 'Fichier requis' }, { status: 400 });
       if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_BYTES) {
         return Response.json({ error: 'Fichier invalide' }, { status: 400 });
+      }
+      const owned = await base44.asServiceRole.entities.UserFile.filter({ user_id: user.id }, '-created_date', MAX_FILES_PER_USER);
+      if ((Array.isArray(owned) ? owned : owned?.items ?? []).length >= MAX_FILES_PER_USER) {
+        return Response.json({ error: 'Limite de fichiers atteinte' }, { status: 429 });
       }
       const up = await base44.asServiceRole.integrations.Core.UploadPrivateFile({ file });
       await recordOwner(base44, user.id, up.file_uri);
