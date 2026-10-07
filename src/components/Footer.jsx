@@ -7,70 +7,47 @@ const scrollToSection = (id) => {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
+const LINK = 'text-left text-muted-foreground hover:text-foreground transition-colors min-h-0';
+
 export default function Footer() {
   const { t } = useLang();
 
   return (
-    <footer className="bg-foreground text-background/60 px-5 py-12 md:py-16">
-      <div className="max-w-4xl mx-auto">
-        {/* Top row */}
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 mb-10">
-          {/* Brand */}
+    <footer className="px-5 pb-10 md:px-10">
+      <div className="mx-auto mt-14 max-w-[1440px] border-t border-white/[0.09] pt-12">
+        <div className="mb-10 flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <div className="h-11 w-11 rounded-2xl overflow-hidden shadow-sm">
-                <img src="/icons/icon-192.png" alt="StyleMe" className="w-full h-full object-cover" />
-                </div>
-                <span className="text-background font-black text-xl tracking-tight">StyleMe</span>
+            <div className="flex items-center gap-2.5">
+              <div className="h-9 w-9 overflow-hidden rounded-[11px] shadow-[0_0_24px_rgba(140,66,215,0.47)]">
+                <img src="/icons/icon-192.png" alt="StyleMe" className="h-full w-full object-cover" />
+              </div>
+              <span className="text-xl font-extrabold tracking-tight">StyleMe</span>
             </div>
-            <p className="text-sm text-background/40 max-w-[200px] leading-relaxed">
+            <p className="max-w-[220px] text-sm leading-relaxed text-muted-foreground">
               {t('whySubtitle')}
             </p>
           </div>
 
-          {/* Links — three columns */}
-          <div className="flex gap-8 md:gap-10 text-sm flex-wrap">
-            {/* Section anchors */}
+          <div className="flex flex-wrap gap-8 text-sm md:gap-14">
             <div className="flex flex-col gap-2">
-              <p className="text-background/30 text-[11px] uppercase tracking-widest font-semibold mb-1">{t('footerProduct')}</p>
-              <button onClick={() => scrollToSection('section-why')} className="text-left hover:text-background transition-colors min-h-0">
-                {t('footerFeatures')}
-              </button>
-              <button onClick={() => scrollToSection('section-how')} className="text-left hover:text-background transition-colors min-h-0">
-                {t('footerHowItWorks')}
-              </button>
-              <button onClick={() => scrollToSection('section-pricing')} className="text-left hover:text-background transition-colors min-h-0">
-                {t('footerPricing')}
-              </button>
-              <button onClick={() => scrollToSection('section-faq')} className="text-left hover:text-background transition-colors min-h-0">
-                {t('footerFaq')}
-              </button>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-foreground/40">{t('footerProduct')}</p>
+              <button onClick={() => scrollToSection('section-why')} className={LINK}>{t('footerFeatures')}</button>
+              <button onClick={() => scrollToSection('section-how')} className={LINK}>{t('footerHowItWorks')}</button>
+              <button onClick={() => scrollToSection('section-pricing')} className={LINK}>{t('footerPricing')}</button>
+              <button onClick={() => scrollToSection('section-faq')} className={LINK}>{t('footerFaq')}</button>
             </div>
 
-            {/* Support links */}
             <div className="flex flex-col gap-2">
-              <p className="text-background/30 text-[11px] uppercase tracking-widest font-semibold mb-1">{t('footerSupport')}</p>
-              <Link to="/about" className="hover:text-background transition-colors">
-                {t('about')}
-              </Link>
-              <Link to="/contact" className="hover:text-background transition-colors">
-                {t('contactUs')}
-              </Link>
-              <Link to="/privacy" className="hover:text-background transition-colors">
-                {t('privacyPolicy')}
-              </Link>
-              <Link to="/terms" className="hover:text-background transition-colors">
-                {t('termsTitle')}
-              </Link>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-foreground/40">{t('footerSupport')}</p>
+              <Link to="/about" className={LINK}>{t('about')}</Link>
+              <Link to="/contact" className={LINK}>{t('contactUs')}</Link>
+              <Link to="/privacy" className={LINK}>{t('privacyPolicy')}</Link>
+              <Link to="/terms" className={LINK}>{t('termsTitle')}</Link>
             </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-background/10 mb-6" />
-
-        {/* Bottom row */}
-        <div className="text-xs text-background/30">
+        <div className="border-t border-white/10 pt-6 text-xs text-foreground/40">
           <p>© {new Date().getFullYear()} StyleMe. {t('footerRights')}</p>
         </div>
       </div>

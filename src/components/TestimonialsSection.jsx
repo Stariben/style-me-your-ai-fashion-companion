@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
+import AuroraSection from '@/components/home/AuroraSection';
 
 const TESTIMONIALS = [
   {
@@ -27,56 +28,34 @@ export default function TestimonialsSection() {
   const { t } = useLang();
 
   return (
-    <section className="bg-muted/30 px-5 py-16 md:py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-10 max-w-2xl mx-auto"
-      >
-        <h2 className="text-[1.8rem] md:text-[2.8rem] font-black tracking-tight text-foreground">
-          {t('testimonialsTitle')}
-        </h2>
-        <p className="text-sm md:text-lg text-muted-foreground mt-3">
-          {t('testimonialsSubtitle')}
-        </p>
-      </motion.div>
-
-      <div className="max-w-2xl md:max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+    <AuroraSection title={t('testimonialsTitle')} subtitle={t('testimonialsSubtitle')}>
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         {TESTIMONIALS.map((item, i) => (
-          <motion.div
+          <motion.article
             key={i}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-20px' }}
             transition={{ delay: i * 0.09 }}
-            className="bg-card border border-border/60 rounded-2xl p-6 md:p-7 flex flex-col gap-4 hover:shadow-md transition-shadow"
+            className="flex min-h-[155px] flex-col gap-4 rounded-[22px] border border-white/[0.12] bg-gradient-to-br from-white/[0.05] to-white/[0.015] p-[25px]"
           >
-            {/* Stars */}
-            <div className="flex gap-0.5">
+            <div className="flex gap-1">
               {[...Array(5)].map((_, j) => (
-                <Star key={j} className="h-4 w-4 text-amber-400 fill-amber-400" />
+                <Star key={j} className="h-4 w-4 fill-amber-400 text-amber-400" />
               ))}
             </div>
-            {/* Title */}
-            <p className="text-base font-bold text-foreground leading-snug">
-              {t(item.titleKey)}
-            </p>
-            {/* Quote */}
-            <p className="text-sm text-muted-foreground leading-relaxed flex-1">
-              {t(item.textKey)}
-            </p>
-            {/* Author */}
-            <div className="flex items-center gap-3 pt-2 border-t border-border/50">
+            <p className="text-base font-bold leading-snug">{t(item.titleKey)}</p>
+            <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{t(item.textKey)}</p>
+            <div className="flex items-center gap-3 border-t border-white/10 pt-3">
               <img src={item.avatar} alt="" className="h-9 w-9 rounded-full object-cover" />
               <div>
-                <p className="text-sm font-semibold text-foreground">{t(item.nameKey)}</p>
+                <p className="text-sm font-semibold">{t(item.nameKey)}</p>
                 <p className="text-[11px] text-muted-foreground">✓ Verified</p>
               </div>
             </div>
-          </motion.div>
+          </motion.article>
         ))}
       </div>
-    </section>
+    </AuroraSection>
   );
 }

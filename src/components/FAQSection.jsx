@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
+import AuroraSection from '@/components/home/AuroraSection';
 
 const FAQ_KEYS = [
   { qKey: 'faq1Q', aKey: 'faq1A' },
@@ -18,22 +19,8 @@ export default function FAQSection() {
   const [open, setOpen] = useState(null);
 
   return (
-    <section id="section-faq" className="bg-background px-5 py-14 md:py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-9 max-w-2xl mx-auto"
-      >
-        <h2 className="text-[1.7rem] md:text-[2.6rem] font-black tracking-tight text-foreground">
-          {t('faqTitle')}
-        </h2>
-        <p className="text-sm md:text-lg text-muted-foreground mt-2">
-          {t('faqSubtitle')}
-        </p>
-      </motion.div>
-
-      <div className="max-w-2xl md:max-w-4xl mx-auto space-y-2 md:space-y-3">
+    <AuroraSection id="section-faq" title={t('faqTitle')} subtitle={t('faqSubtitle')}>
+      <div className="mx-auto max-w-4xl space-y-2 md:space-y-3">
         {FAQ_KEYS.map(({ qKey, aKey }, i) => {
           const isOpen = open === i;
           return (
@@ -43,17 +30,15 @@ export default function FAQSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-20px' }}
               transition={{ delay: i * 0.06 }}
-              className="rounded-2xl border border-border/60 bg-card overflow-hidden"
+              className="glass overflow-hidden rounded-2xl bg-white/[0.04]"
             >
               <button
                 onClick={() => setOpen(isOpen ? null : i)}
-                className="w-full flex items-center justify-between px-5 md:px-8 py-4 md:py-6 text-left gap-3"
+                className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left md:px-8 md:py-6"
               >
-                <span className="text-[15px] md:text-lg font-semibold text-foreground leading-snug">
-                  {t(qKey)}
-                </span>
+                <span className="text-[15px] font-semibold leading-snug md:text-lg">{t(qKey)}</span>
                 <ChevronDown
-                  className={`h-5 w-5 md:h-6 md:w-6 text-muted-foreground shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                  className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 md:h-6 md:w-6 ${isOpen ? 'rotate-180' : ''}`}
                 />
               </button>
               <AnimatePresence initial={false}>
@@ -66,7 +51,7 @@ export default function FAQSection() {
                     transition={{ duration: 0.22, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <p className="px-5 md:px-8 pb-4 md:pb-6 text-[14px] md:text-base text-muted-foreground leading-relaxed">
+                    <p className="px-5 pb-4 text-[14px] leading-relaxed text-muted-foreground md:px-8 md:pb-6 md:text-base">
                       {t(aKey)}
                     </p>
                   </motion.div>
@@ -76,6 +61,6 @@ export default function FAQSection() {
           );
         })}
       </div>
-    </section>
+    </AuroraSection>
   );
 }

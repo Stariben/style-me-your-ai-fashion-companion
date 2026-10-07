@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Download, LogIn, Share, X } from 'lucide-react';
+import { Download, Share, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/i18n';
@@ -146,18 +146,18 @@ export default function Header() {
   const handleLogin = () => navigate('/login');
 
   return (
-    <header className={`sticky top-0 z-40 px-5 py-3 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-sm' : 'bg-transparent'}`}>
-      <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
+    <header className={`sticky top-0 z-40 px-5 md:px-10 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-xl' : 'bg-transparent'}`}>
+      <div className="aurora-rise max-w-[1440px] mx-auto h-20 md:h-[104px] flex items-center justify-between gap-4 border-b border-white/[0.09]">
         {/* Brand */}
-        <div className="flex items-center gap-2.5">
-          <div className="h-12 w-12 rounded-2xl overflow-hidden shrink-0 shadow-sm">
+        <div className="flex items-center gap-3.5">
+          <div className="h-10 w-10 md:h-[42px] md:w-[42px] rounded-[14px] overflow-hidden shrink-0 shadow-[0_0_30px_rgba(140,66,215,0.47)]">
             <img src="/icons/icon-192.png" alt="StyleMe" className="w-full h-full object-cover" />
           </div>
-          <span className="text-xl font-black tracking-tight text-foreground">StyleMe</span>
+          <span className="text-2xl font-extrabold tracking-[-0.04em] text-foreground">StyleMe</span>
         </div>
 
         {/* Nav */}
-        <nav className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
+        <nav className="hidden md:flex items-center gap-[42px] text-base text-[#c4bfd1]">
           {[
             { label: t('footerFeatures'), id: 'section-why' },
             { label: t('footerHowItWorks'), id: 'section-how' },
@@ -167,7 +167,7 @@ export default function Header() {
             <button
               key={item.id}
               onClick={() => scrollToSection(item.id)}
-              className="px-3.5 py-2 rounded-lg hover:bg-muted hover:text-foreground transition-colors min-h-0 font-medium text-sm"
+              className="hover:text-white transition-colors duration-200 min-h-0 font-semibold text-base"
             >
               {item.label}
             </button>
@@ -177,10 +177,9 @@ export default function Header() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           <InstallPWAButton />
-          <Button onClick={handleLogin} size="sm" className="gap-2 rounded-full px-5 font-semibold">
-            <LogIn className="h-3.5 w-3.5" />
-            <span>{t('loginBtn')}</span>
-          </Button>
+          <button onClick={handleLogin} className="login-aurora">
+            {t('loginBtn')}
+          </button>
         </div>
       </div>
     </header>

@@ -78,6 +78,106 @@
   }
 }
 
+@layer components {
+  .aurora {
+    --background: 249 37% 6%;
+    --foreground: 252 100% 98%;
+    --card: 249 25% 10%;
+    --card-foreground: 252 100% 98%;
+    --muted: 249 20% 14%;
+    --muted-foreground: 255 12% 68%;
+    --border: 0 0% 100% / 0.12;
+    --input: 0 0% 100% / 0.12;
+    --aurora-pink: 330 87% 70%;
+    position: relative;
+    isolation: isolate;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  .aurora::before,
+  .aurora::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(100px);
+    animation: aurora-drift 13s ease-in-out infinite alternate;
+  }
+  .aurora::before {
+    width: 650px;
+    height: 620px;
+    top: 65px;
+    left: 5%;
+    background: radial-gradient(circle, #8C42D766, transparent 70%);
+  }
+  .aurora::after {
+    width: 620px;
+    height: 520px;
+    top: 260px;
+    right: 3%;
+    background: radial-gradient(circle, #F472B644, transparent 70%);
+    animation-delay: -5s;
+  }
+  .aurora-rise {
+    animation: aurora-rise 0.7s ease both;
+  }
+  .glass {
+    border: 1px solid rgb(255 255 255 / 0.12);
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.04), 0 14px 32px rgb(0 0 0 / 0.2);
+  }
+  .btn-aurora {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: linear-gradient(110deg, #8C42D7, #c458ca 55%, #F472B6);
+    color: #fff;
+    border: 0;
+    border-radius: 16px;
+    padding: 19px 29px;
+    font-size: 18px;
+    font-weight: 800;
+    box-shadow: 0 12px 38px #8c42d744;
+    cursor: pointer;
+    transition: filter 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+  .btn-aurora:hover {
+    filter: brightness(1.13);
+    box-shadow: 0 12px 48px #c458ca66;
+  }
+  .btn-aurora:active {
+    transform: scale(0.98);
+  }
+  .btn-aurora:focus-visible,
+  .login-aurora:focus-visible {
+    outline: 3px solid #f472b6;
+    outline-offset: 4px;
+  }
+  .login-aurora {
+    border: 1px solid #ffffff25;
+    border-radius: 14px;
+    padding: 13px 24px;
+    color: #fff;
+    background: #ffffff0b;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .login-aurora:hover {
+    background: #ffffff18;
+    box-shadow: 0 0 24px #8c42d744;
+  }
+}
+
+@keyframes aurora-drift {
+  to { transform: translate3d(45px, -28px, 0) scale(1.08); }
+}
+@keyframes aurora-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -21,7 +21,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="aurora min-h-screen overflow-x-clip">
       <Header />
       <HeroSection onStartAnalysis={handleStartAnalysis} />
       <WhySection />

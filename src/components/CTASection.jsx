@@ -1,48 +1,34 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 
 export default function CTASection({ onStartAnalysis }) {
   const { t } = useLang();
 
   return (
-    <section className="px-5 py-16 md:py-24 bg-background">
+    <section className="px-5 md:px-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="max-w-2xl md:max-w-4xl mx-auto"
+        className="mx-auto mt-6 max-w-[1440px]"
       >
-        <div className="relative rounded-3xl overflow-hidden bg-foreground px-8 py-14 md:px-16 md:py-20 text-center">
-          {/* Blobs */}
-          <div className="absolute -top-16 -right-16 h-64 w-64 md:h-96 md:w-96 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-16 -left-16 h-64 w-64 md:h-96 md:w-96 rounded-full bg-accent/25 blur-3xl pointer-events-none" />
-          {/* Dot grid */}
-          <div
-            className="absolute inset-0 opacity-[0.06] pointer-events-none"
-            style={{
-              backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
-              backgroundSize: '28px 28px',
-            }}
-          />
-
+        <div className="relative overflow-hidden rounded-[28px] border border-white/[0.12] bg-gradient-to-br from-white/[0.07] to-white/[0.02] px-8 py-14 text-center shadow-[0_20px_60px_rgba(0,0,0,0.33)] md:px-12">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_130%,rgba(140,66,215,0.33),transparent_65%)]" />
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 bg-white/10 text-white/80 text-xs font-semibold px-4 py-1.5 rounded-full mb-5 tracking-widest uppercase">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80">
               <Sparkles className="h-3 w-3" />
               StyleMe AI
             </div>
-            <h2 className="text-[2.2rem] md:text-[3.5rem] font-black text-white leading-tight mb-4">
+            <h2 className="mb-4 text-[2.2rem] font-extrabold leading-[1.15] tracking-[-0.04em] md:text-[2.6rem]">
               {t('ctaTitle')}
             </h2>
-            <p className="text-base md:text-xl text-white/50 mb-9 leading-relaxed max-w-sm md:max-w-lg mx-auto">
+            <p className="mx-auto mb-8 max-w-lg text-base leading-relaxed text-muted-foreground md:text-xl">
               {t('ctaSubtitle')}
             </p>
-            <button
-              onClick={onStartAnalysis}
-              className="inline-flex items-center gap-2.5 bg-primary text-primary-foreground font-bold text-base md:text-xl px-9 md:px-12 py-4 md:py-5 rounded-full hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-primary/40"
-            >
+            <button onClick={onStartAnalysis} className="btn-aurora">
               {t('ctaButton')}
-              <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+              <span className="text-[22px]">→</span>
             </button>
           </div>
         </div>
