@@ -146,7 +146,19 @@ Give a highly personalized, specific assessment — NOT generic fashion advice. 
               pros: { type: 'array', items: { type: 'string' }, description: '2-3 positive aspects of this outfit on this person' },
               cons: { type: 'array', items: { type: 'string' }, description: '1-2 things to consider or potential issues' },
               styling_tips: { type: 'array', items: { type: 'string' }, description: '2-3 tips to make this outfit work even better' },
-              suggestions: { type: 'array', items: { type: 'string' }, description: '3-4 specific alternative clothing items, colors or accessories that would suit this particular person very well, based on their skin tone, features and body shape (e.g. "Chemise vert émeraude à col ouvert")' },
+              suggestions: {
+                type: 'array',
+                description: 'Exactly 3 specific clothing items that would suit this particular person very well, based on their skin tone, features and body shape',
+                items: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string', description: 'Short item name, e.g. "Chemise vert émeraude à col ouvert"' },
+                    reason: { type: 'string', description: 'One sentence explaining why it suits this person' },
+                    search_query: { type: 'string', description: 'Short English shopping search query to find this item online (item type, color, cut)' },
+                    image_prompt: { type: 'string', description: 'English prompt for a clean e-commerce product photo of this item on a plain light background, no text' },
+                  },
+                },
+              },
               person_description: { type: 'string', description: 'Brief physical description of the person: skin tone, hair color, body type, approximate age range' },
               outfit_description: { type: 'string', description: 'Brief description of the clothing item: type, color, style, fabric if visible' },
             },
@@ -162,10 +174,26 @@ Describe very specifically: the person's facial features (skin undertone, eye co
 
       const analysis = analysisRaw?.response ?? analysisRaw;
 
-      const imageGen = await base44.asServiceRole.integrations.Core.GenerateImage({
-        prompt: `A realistic fashion photo of a person wearing the outfit. ${imageResult}. The person is wearing the clothing item naturally, full body or 3/4 shot, clean neutral background, professional fashion photography style, high quality.`,
-        existing_image_urls: [personImg, outfitImg],
-      });
+      const suggestions = (Array.isArray(analysis.suggestions) ? analysis.suggestions : [])
+        .filter((s) => s && typeof s === 'object' && s.name)
+        .slice(0, 3);
+      const [imageGen, ...suggestionImages] = await Promise.all([
+        base44.asServiceRole.integrations.Core.GenerateImage({
+          prompt: `A realistic fashion photo of a person wearing the outfit. ${imageResult}. The person is wearing the clothing item naturally, full body or 3/4 shot, clean neutral background, professional fashion photography style, high quality.`,
+          existing_image_urls: [personImg, outfitImg],
+        }),
+        ...suggestions.map((s) =>
+          base44.asServiceRole.integrations.Core.GenerateImage({
+            prompt: `${s.image_prompt || s.name}. Clean e-commerce product photo, single clothing item, plain light background, no text, no watermark, high quality.`,
+          }).then((r) => r?.url || null).catch((e) => { console.error('Suggestion image failed:', e); return null; })
+        ),
+      ]);
+      analysis.suggestions = suggestions.map((s, i) => ({
+        name: s.name,
+        reason: s.reason || '',
+        search_query: s.search_query || s.name,
+        image_url: suggestionImages[i],
+      }));
 
       // ----- 6. SAUVEGARDER DANS L'HISTORIQUE (côté serveur, fiable) -----
       try {

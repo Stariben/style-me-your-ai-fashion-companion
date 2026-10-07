@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageLightbox from '@/components/ImageLightbox';
+import SuggestionCard from '@/components/SuggestionCard';
 import { ThumbsUp, ThumbsDown, Lightbulb, RefreshCw, Sparkles } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 
@@ -178,19 +179,11 @@ export default function ResultCard({ result, generatedImage, personImage, outfit
               <Sparkles className="h-4 w-4 text-aurora-pink" />
               <span className="text-sm font-semibold">{t('resultSuggestions')}</span>
             </div>
-            <ul className="space-y-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {result.suggestions.map((s, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.3 + i * 0.1 }}
-                  className="text-sm text-muted-foreground pl-4 relative before:content-[''] before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-aurora-pink"
-                >
-                  {s}
-                </motion.li>
+                <SuggestionCard key={i} suggestion={s} delay={1.3 + i * 0.1} />
               ))}
-            </ul>
+            </div>
           </div>
         )}
 
