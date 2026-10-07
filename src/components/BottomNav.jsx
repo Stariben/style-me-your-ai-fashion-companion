@@ -25,8 +25,8 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border flex"
-      style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/50 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_30px_rgba(0,0,0,0.3)] flex"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {tabs.map(({ path, label, icon: Icon }) => {
         const active = pathname === path;
         return (
