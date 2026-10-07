@@ -14,7 +14,8 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { action, lang } = await req.json();
+    const body = await req.json();
+    const { action, lang } = body;
     const db = base44.asServiceRole.entities;
 
     const existing = items(await db.StyleProfile.filter({ user_id: user.id }))[0] || null;
@@ -22,6 +23,19 @@ Deno.serve(async (req) => {
 
     if (action === 'get') {
       return Response.json({ profile: saved, generated_at: existing?.generated_at || null });
+    }
+    if (action === 'image') {
+      // Generates one recommendation photo per call (keeps each request short)
+      const idx = Number(body.index);
+      const rec = saved?.recommendations?.[idx];
+      if (!rec) return Response.json({ error: 'Invalid index' }, { status: 400 });
+      if (rec.image_url) return Response.json({ image_url: rec.image_url });
+      const img = await base44.asServiceRole.integrations.Core.GenerateImage({
+        prompt: `Professional fashion photo of a model who resembles this description: ${rec.model_description || `${saved.skin_tone}, ${saved.hair}, ${saved.body_type}`}. The model is wearing: ${rec.name}. Full or 3/4 body, clean neutral studio background, natural pose, no text, no watermark, high quality.`,
+      });
+      rec.image_url = img?.url || null;
+      await db.StyleProfile.update(existing.id, { profile_json: JSON.stringify(saved) });
+      return Response.json({ image_url: rec.image_url });
     }
     if (action !== 'refresh') return Response.json({ error: 'Invalid action' }, { status: 400 });
 
@@ -82,11 +96,6 @@ All text fields MUST be written in ${outputLang}, except search_query, model_des
       .filter((r: any) => r && r.name)
       .slice(0, MAX_RECOMMENDATIONS);
 
-    const images = await Promise.all(recs.map((r: any) =>
-      base44.asServiceRole.integrations.Core.GenerateImage({
-        prompt: `Professional fashion photo of a model who resembles this description: ${r.model_description || `${p.skin_tone}, ${p.hair}, ${p.body_type}`}. The model is wearing: ${r.name}. Full or 3/4 body, clean neutral studio background, natural pose, no text, no watermark, high quality.`,
-      }).then((x: any) => x?.url || null).catch((e: unknown) => { console.error('Profile image failed:', e); return null; })
-    ));
 
     const profile = {
       skin_tone: p.skin_tone || '',
@@ -101,7 +110,8 @@ All text fields MUST be written in ${outputLang}, except search_query, model_des
         name: r.name,
         reason: r.reason || '',
         search_query: r.search_query || r.name,
-        image_url: images[i],
+        model_description: r.model_description || '',
+        image_url: null,
       })),
     };
 

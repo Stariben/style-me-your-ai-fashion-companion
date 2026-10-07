@@ -8,6 +8,12 @@ import { useLang } from '@/lib/i18n';
 import { getFashionTips } from '@/lib/fashionTipsContent';
 
 const ICONS = { palette: Palette, shirt: Shirt, sparkles: Sparkles, camera: Camera };
+const IMAGES = {
+  palette: 'https://media.base44.com/images/public/69c1a602ac220e242945c724/401d4371d_generated_image.png',
+  shirt: 'https://media.base44.com/images/public/69c1a602ac220e242945c724/04a9c4683_generated_image.png',
+  sparkles: 'https://media.base44.com/images/public/69c1a602ac220e242945c724/9578f5daa_generated_image.png',
+  camera: 'https://media.base44.com/images/public/69c1a602ac220e242945c724/5ae581718_generated_image.png',
+};
 
 export default function FashionTips() {
   const navigate = useNavigate();
@@ -56,6 +62,12 @@ export default function FashionTips() {
                   </div>
                   <h2 className="text-lg font-bold">{section.heading}</h2>
                 </div>
+                <img
+                  src={IMAGES[section.icon]}
+                  alt={section.heading}
+                  loading="lazy"
+                  className="w-full aspect-[16/9] object-cover rounded-2xl mb-3 border border-white/10"
+                />
                 <div className="space-y-3">
                   {section.items.map((item) => (
                     <motion.div

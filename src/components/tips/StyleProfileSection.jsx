@@ -23,9 +23,26 @@ export default function StyleProfileSection({ copy }) {
   const { lang } = useLang();
   const [state, setState] = useState({ loading: true, profile: null, busy: false, error: null });
 
+  // Fills missing model photos one at a time (each call stays short)
+  const fillImages = async (profile) => {
+    for (let i = 0; i < (profile?.recommendations?.length || 0); i++) {
+      if (profile.recommendations[i].image_url) continue;
+      try {
+        const res = await base44.functions.invoke('styleProfile', { action: 'image', index: i });
+        setState((s) => s.profile && ({
+          ...s,
+          profile: { ...s.profile, recommendations: s.profile.recommendations.map((r, j) => j === i ? { ...r, image_url: res.data.image_url } : r) },
+        }) || s);
+      } catch { /* leave card without photo */ }
+    }
+  };
+
   useEffect(() => {
     base44.functions.invoke('styleProfile', { action: 'get' })
-      .then((res) => setState({ loading: false, profile: res.data?.profile || null, busy: false, error: null }))
+      .then((res) => {
+        setState({ loading: false, profile: res.data?.profile || null, busy: false, error: null });
+        fillImages(res.data?.profile);
+      })
       .catch(() => setState({ loading: false, profile: null, busy: false, error: null }));
   }, []);
 
@@ -33,7 +50,9 @@ export default function StyleProfileSection({ copy }) {
     setState((s) => ({ ...s, busy: true, error: null }));
     try {
       const res = await base44.functions.invoke('styleProfile', { action: 'refresh', lang });
-      setState({ loading: false, profile: res.data.profile, busy: false, error: null });
+      setState({ loading: false, profile: res.data.profile, busy: true, error: null });
+      await fillImages(res.data.profile);
+      setState((s) => ({ ...s, busy: false }));
     } catch (e) {
       const noHistory = e?.response?.data?.noHistory;
       setState((s) => ({ ...s, busy: false, error: noHistory ? copy.noHistory : copy.error }));
