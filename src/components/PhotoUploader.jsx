@@ -87,7 +87,7 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-border shadow-sm"
+            className="relative aspect-[3/4] rounded-2xl overflow-hidden glass"
           >
             <img
               src={imageUrl}
@@ -107,26 +107,26 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full aspect-[3/4] rounded-2xl border-2 border-dashed border-border bg-muted/50 flex flex-col items-center justify-center gap-4 p-4"
+            className="w-full aspect-[3/4] rounded-2xl border-2 border-dashed border-white/20 bg-white/[0.04] backdrop-blur-md flex flex-col items-center justify-center gap-4 p-4"
           >
             {isUploading ? (
               <div className="w-8 h-8 border-3 border-muted-foreground/30 border-t-primary rounded-full animate-spin" />
             ) : (
               <>
-                <div className="h-14 w-14 rounded-2xl bg-background border border-border flex items-center justify-center shadow-sm">
+                <div className="h-14 w-14 rounded-2xl bg-white/[0.06] border border-white/15 flex items-center justify-center shadow-[0_0_24px_rgba(140,66,215,0.3)]">
                   <Icon className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div className="flex flex-col gap-2 w-full">
                   <button
                     onClick={openCamera}
-                    className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-primary text-primary-foreground text-sm font-medium transition-opacity active:opacity-80"
+                    className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-gradient-to-r from-primary to-aurora-pink text-white text-sm font-semibold transition-opacity active:opacity-80 hover:brightness-110"
                   >
                     <Camera className="h-4 w-4" />
                     {t('takePhoto')}
                   </button>
                   <button
                     onClick={handleGalleryClick}
-                    className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-background border border-border text-sm font-medium text-foreground transition-opacity active:opacity-80"
+                    className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-white/[0.06] border border-white/15 text-sm font-medium text-foreground transition-colors hover:bg-white/10 active:opacity-80"
                   >
                     <ImagePlus className="h-4 w-4" />
                     {t('gallery')}

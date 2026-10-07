@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import { ThumbsUp, ThumbsDown, Lightbulb, RefreshCw, Wand2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ThumbsUp, ThumbsDown, Lightbulb, RefreshCw } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 
 function ScoreRing({ score }) {
@@ -43,7 +42,18 @@ function ScoreRing({ score }) {
   );
 }
 
-export default function ResultCard({ result, generatedImage, onReset }) {
+function CompareTile({ src, label, highlight }) {
+  return (
+    <div className="flex-1 min-w-0">
+      <div className={`aspect-[3/4] rounded-2xl overflow-hidden ${highlight ? 'border-2 border-primary shadow-[0_0_30px_rgba(140,66,215,0.45)]' : 'glass'}`}>
+        <img src={src} alt={label} className="w-full h-full object-cover" />
+      </div>
+      <p className={`text-xs font-semibold text-center mt-2 truncate ${highlight ? 'text-primary' : 'text-muted-foreground'}`}>{label}</p>
+    </div>
+  );
+}
+
+export default function ResultCard({ result, generatedImage, personImage, outfitImage, onReset }) {
   const { t } = useLang();
   if (!result) return null;
 
@@ -53,28 +63,29 @@ export default function ResultCard({ result, generatedImage, onReset }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="mx-6 mt-6 mb-8"
+      data-testid="result-card"
     >
-      <div className="bg-card rounded-3xl border border-border p-6 shadow-sm">
-        {/* Generated image */}
+      <div className="glass bg-white/[0.04] rounded-3xl p-6">
+        {/* Comparison: photo + outfit → AI result */}
         {generatedImage && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="mb-5 rounded-2xl overflow-hidden border border-border"
+            className="mb-6"
           >
-            <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/50 border-b border-border">
-              <Wand2 className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold">{t('aiPreview')}</span>
+            <div className="flex items-start gap-2 sm:gap-3">
+              {personImage && <CompareTile src={personImage} label={t('yourPhoto')} />}
+              {outfitImage && <CompareTile src={outfitImage} label={t('outfitPhoto')} />}
+              <CompareTile src={generatedImage} label={t('aiPreview')} highlight />
             </div>
-            <img src={generatedImage} alt="AI generated outfit preview" className="w-full object-cover" />
           </motion.div>
         )}
 
         {/* Score */}
         <div className="flex flex-col items-center mb-6">
           <ScoreRing score={result.match_score} />
-          <h3 className="text-lg font-bold mt-3">{result.verdict}</h3>
+          <h3 className="text-xl font-extrabold mt-3 bg-gradient-to-r from-primary to-aurora-pink bg-clip-text text-transparent">{result.verdict}</h3>
         </div>
 
         {/* Pros */}
@@ -146,10 +157,10 @@ export default function ResultCard({ result, generatedImage, onReset }) {
           </div>
         )}
 
-        <Button onClick={onReset} variant="outline" className="w-full rounded-xl h-11 gap-2">
+        <button onClick={onReset} className="login-aurora w-full flex items-center justify-center gap-2 h-12">
           <RefreshCw className="h-4 w-4" />
           {t('tryAnotherOutfit')}
-        </Button>
+        </button>
       </div>
     </motion.div>
   );

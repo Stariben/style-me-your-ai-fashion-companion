@@ -3,7 +3,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useLang } from '@/lib/i18n';
 import { Sparkles, RefreshCw } from 'lucide-react';
 import usePullToRefresh from '../hooks/usePullToRefresh';
-import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -127,7 +126,7 @@ export default function Analyze() {
 
   return (
     <div
-      className="min-h-screen bg-background pt-14 pb-6"
+      className="min-h-screen pt-14 pb-24"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -141,17 +140,17 @@ export default function Analyze() {
       <AnimatePresence>{isAnalyzing && <AnalyzingOverlay />}</AnimatePresence>
       <AnimatePresence>{showPaywall && <Paywall onClose={() => setShowPaywall(false)} />}</AnimatePresence>
 
-      <div>
+      <div className="max-w-3xl mx-auto">
         {/* Hero text */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="px-6 pt-6 mb-6"
         >
-          <h2 className="text-2xl font-bold tracking-tight leading-tight">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
             {t('doesThisOutfit')}
             <br />
-            <span className="text-primary">{t('suitYou')}</span>
+            <span className="bg-gradient-to-r from-primary to-aurora-pink bg-clip-text text-transparent">{t('suitYou')}</span>
           </h2>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
             {t('homeSubtitle')}
@@ -188,15 +187,14 @@ export default function Analyze() {
           transition={{ delay: 0.2 }}
           className="px-6 mt-6"
         >
-          <Button
+          <button
             onClick={handleAnalyze}
             disabled={!canAnalyze}
-            className="w-full h-13 rounded-2xl text-base font-semibold gap-2.5 shadow-lg shadow-primary/20 disabled:shadow-none transition-all"
-            size="lg"
+            className="btn-aurora w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
           >
             <Sparkles className="h-5 w-5" />
             {t('analyzeMyLook')}
-          </Button>
+          </button>
 
           {!personImage && !outfitImage && (
             <p className="text-xs text-center text-muted-foreground mt-3">
@@ -228,7 +226,7 @@ export default function Analyze() {
 
         {/* Results */}
         <AnimatePresence>
-          {result && <ResultCard key="result-card" result={result} generatedImage={generatedImage} onReset={handleReset} />}
+          {result && <ResultCard key="result-card" result={result} generatedImage={generatedImage} personImage={personImage} outfitImage={outfitImage} onReset={handleReset} />}
         </AnimatePresence>
       </div>
     </div>

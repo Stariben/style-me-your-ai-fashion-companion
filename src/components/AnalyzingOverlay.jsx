@@ -20,12 +20,12 @@ export default function AnalyzingOverlay() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-background/90 backdrop-blur-md flex flex-col items-center justify-center gap-6 px-8"
+      className="fixed inset-0 z-50 bg-background/85 backdrop-blur-xl flex flex-col items-center justify-center gap-6 px-8"
     >
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-        className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center"
+        className="h-16 w-16 rounded-3xl bg-white/[0.06] border border-white/15 shadow-[0_0_40px_rgba(140,66,215,0.5)] flex items-center justify-center"
       >
         <Sparkles className="h-8 w-8 text-primary" />
       </motion.div>
@@ -53,7 +53,7 @@ export default function AnalyzingOverlay() {
         className="w-48 h-1 bg-muted rounded-full overflow-hidden mt-4"
       >
         <motion.div
-          className="h-full bg-primary rounded-full"
+          className="h-full bg-gradient-to-r from-primary to-aurora-pink rounded-full"
           initial={{ width: '0%' }}
           animate={{ width: '100%' }}
           transition={{ duration: 12, ease: 'linear' }}
