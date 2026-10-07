@@ -73,7 +73,7 @@ const AuthenticatedApp = () => {
           <Route path="/terms" element={<PageTransition><TermsAndConditions /></PageTransition>} />
           <Route path="/about" element={<PageTransition><About /></PageTransition>} />
           <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-          <Route path="/fashion-tips" element={<PageTransition><FashionTips /><BottomNav /></PageTransition>} />
+          <Route path="/fashion-tips" element={<PageTransition><MobileHeader /><FashionTips /><BottomNav /></PageTransition>} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
