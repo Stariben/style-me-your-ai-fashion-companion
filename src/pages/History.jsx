@@ -8,6 +8,7 @@ import { Clock, ChevronRight, X, GitCompare, CheckCircle2, Trash2 } from 'lucide
 import { Button } from '@/components/ui/button';
 import ResultCard from '../components/ResultCard';
 import ImageLightbox from '../components/ImageLightbox';
+import PrivateImg from '../components/PrivateImg';
 
 function HistoryItemModal({ item, onClose }) {
   const { t } = useLang();
@@ -53,7 +54,7 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
     <div className="flex-1 min-w-0 flex flex-col gap-3">
       {item.generated_image && (
         <div className="rounded-2xl overflow-hidden border border-border aspect-[3/4] cursor-zoom-in" onClick={() => setZoom({ src: item.generated_image, alt: 'AI preview' })}>
-          <img src={item.generated_image} alt="AI preview" className="w-full h-full object-cover" />
+          <PrivateImg src={item.generated_image} alt="AI preview" className="w-full h-full object-cover" />
         </div>
       )}
       <div className="text-center">
@@ -62,7 +63,7 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
         <p className="text-xs font-semibold mt-1 leading-snug">{result.verdict}</p>
       </div>
       <div className="rounded-xl overflow-hidden border border-border aspect-[3/4] cursor-zoom-in" onClick={() => setZoom({ src: item.outfit_image, alt: 'Outfit' })}>
-        <img src={item.outfit_image} alt="Outfit" className="w-full h-full object-cover" />
+        <PrivateImg src={item.outfit_image} alt="Outfit" className="w-full h-full object-cover" />
       </div>
       {result.pros?.length > 0 && (
         <div>
@@ -108,7 +109,7 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
         <div className="px-6 pt-4 pb-2">
           <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">{t('yourLook')}</p>
           <div className="w-24 mx-auto rounded-2xl overflow-hidden border border-border aspect-[3/4] cursor-zoom-in" onClick={() => setZoom({ src: itemA.person_image, alt: 'Person' })}>
-            <img src={itemA.person_image} alt="Person" className="w-full h-full object-cover" />
+            <PrivateImg src={itemA.person_image} alt="Person" className="w-full h-full object-cover" />
           </div>
         </div>
 
@@ -326,10 +327,10 @@ export default function History() {
               )}
               <div className="flex -space-x-3 shrink-0">
                 <div className="h-12 w-12 rounded-xl overflow-hidden border-2 border-background z-10">
-                  <img src={item.person_image} alt="" className="w-full h-full object-cover" />
+                  <PrivateImg src={item.person_image} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="h-12 w-12 rounded-xl overflow-hidden border-2 border-background">
-                  <img src={item.outfit_image} alt="" className="w-full h-full object-cover" />
+                  <PrivateImg src={item.outfit_image} alt="" className="w-full h-full object-cover" />
                 </div>
               </div>
               <div className="flex-1 min-w-0">

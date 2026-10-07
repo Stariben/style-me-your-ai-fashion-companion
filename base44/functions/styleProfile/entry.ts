@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 import { hasAcceptedTerms } from '../../shared/termsConsent.ts';
+import { toFetchableUrl } from '../../shared/privateFile.ts';
 
 const LANG_NAMES = { fr: 'French', en: 'English', es: 'Spanish', ru: 'Russian', zh: 'Chinese', pt: 'Portuguese' };
 const COOLDOWN_MS = 10 * 60 * 1000;
@@ -56,7 +57,7 @@ Deno.serve(async (req) => {
         '-created_date',
         1
       ))[0];
-      const ref = lastHist?.person_image;
+      const ref = lastHist?.person_image ? await toFetchableUrl(base44, lastHist.person_image) : null;
       const img = await base44.asServiceRole.integrations.Core.GenerateImage({
         prompt: ref
           ? `Edit the reference photo: keep this exact same person, with the identical face, facial features, skin tone, hair, facial hair, age and body build, so they are instantly recognizable. Dress them in: ${rec.name}. Full or 3/4 body, clean neutral studio background, natural pose, realistic photography, no text, no watermark, high quality. Do NOT change the face or generate a different person.`

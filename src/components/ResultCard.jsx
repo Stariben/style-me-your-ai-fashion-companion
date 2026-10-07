@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageLightbox from '@/components/ImageLightbox';
+import PrivateImg from '@/components/PrivateImg';
 import SuggestionCard from '@/components/SuggestionCard';
 import { ThumbsUp, ThumbsDown, Lightbulb, RefreshCw, Sparkles } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
@@ -58,7 +59,7 @@ function CompareTile({ src, label, highlight }) {
         onClick={() => setZoomed(true)}
         className={`aspect-[3/4] rounded-2xl overflow-hidden cursor-zoom-in ${highlight ? 'border-2 border-primary shadow-[0_0_30px_rgba(140,66,215,0.45)]' : 'glass'}`}
       >
-        <img src={src} alt={label} className="w-full h-full object-cover" />
+        <PrivateImg src={src} alt={label} className="w-full h-full object-cover" />
       </div>
       <p className={`text-xs font-semibold text-center mt-2 truncate ${highlight ? 'text-primary' : 'text-muted-foreground'}`}>{label}</p>
       <AnimatePresence>

@@ -4,6 +4,7 @@ import { useLang } from '@/lib/i18n';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import CameraCapture from './CameraCapture';
+import PrivateImg from './PrivateImg';
 import { useCamera } from '@/lib/CameraContext';
 
 export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear }) {
@@ -37,8 +38,8 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
 
     setIsUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      onImageUploaded(file_url);
+      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
+      onImageUploaded(file_uri);
     } catch {
       alert(t('photoFormatError'));
     } finally {
@@ -53,8 +54,8 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
     closeCamera();
     setIsUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      onImageUploaded(file_url);
+      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
+      onImageUploaded(file_uri);
     } catch {
       alert(t('photoFormatError'));
     } finally {
@@ -89,7 +90,7 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
             exit={{ opacity: 0, scale: 0.95 }}
             className="relative aspect-[3/4] rounded-2xl overflow-hidden glass"
           >
-            <img
+            <PrivateImg
               src={imageUrl}
               alt={label}
               className="w-full h-full object-cover"

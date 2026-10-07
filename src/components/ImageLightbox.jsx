@@ -1,8 +1,10 @@
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import useSignedUrl from '@/hooks/useSignedUrl';
 
-export default function ImageLightbox({ src, alt, onClose }) {
+export default function ImageLightbox({ src: ref, alt, onClose }) {
+  const src = useSignedUrl(ref);
   return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
