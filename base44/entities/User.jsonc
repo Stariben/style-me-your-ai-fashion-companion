@@ -3,14 +3,6 @@
   "name": "User",
   "title": "User",
   "properties": {
-    "email": {
-      "type": "string",
-      "description": "The email of the user"
-    },
-    "full_name": {
-      "type": "string",
-      "description": "The full name of the user"
-    },
     "role": {
       "type": "string",
       "enum": [
@@ -28,20 +20,8 @@
       "type": "number",
       "title": "Analyses gratuites utilis\u00e9es",
       "default": 0
-    },
-    "processed_stripe_sessions": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "title": "Sessions Stripe trait\u00e9es",
-      "default": []
     }
   },
-  "required": [
-    "full_name",
-    "email"
-  ],
   "rls": {
     "create": {
       "user_condition": {
