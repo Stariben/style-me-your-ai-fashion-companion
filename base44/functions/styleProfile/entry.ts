@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
     if (action !== 'image' && action !== 'refresh') return Response.json({ error: 'Invalid action' }, { status: 400 });
 
     // Per-user lock (claim-then-verify, same AnalysisLock as analyzeOutfit): serializes AI generation
-    const LOCK_TTL_MS = 120_000;
+    const LOCK_TTL_MS = 600_000;
     const locks = db.AnalysisLock;
     const mine = await locks.create({ user_email: user.email, locked_at: new Date().toISOString() });
     release = async () => { await locks.delete(mine.id).catch(() => {}); };

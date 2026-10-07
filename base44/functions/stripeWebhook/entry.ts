@@ -32,14 +32,16 @@ Deno.serve(async (req) => {
     }
 
     if (userEmail && credits > 0) {
+      let claimId = null;
+      const base44 = createClientFromRequest(req);
       try {
-        const base44 = createClientFromRequest(req);
         const users = await base44.asServiceRole.entities.User.filter({ email: userEmail });
         if (users.length > 0) {
           const user = users[0];
 
           // Idempotence (claim-then-verify): create a claim, then only the earliest claim wins.
           const claim = await base44.asServiceRole.entities.ProcessedStripeSession.create({ session_id: sessionId });
+          claimId = claim.id;
           const claims = await base44.asServiceRole.entities.ProcessedStripeSession.filter(
             { session_id: sessionId },
             { sort: 'created_date', limit: 50 }
@@ -54,7 +56,7 @@ Deno.serve(async (req) => {
           }
 
           // Per-user lock (same AnalysisLock used by analyzeOutfit) serializes balance writes
-          const LOCK_TTL_MS = 120_000;
+          const LOCK_TTL_MS = 600_000;
           const locks = base44.asServiceRole.entities.AnalysisLock;
           let lock = null;
           for (let attempt = 0; attempt < 20 && !lock; attempt++) {
@@ -88,6 +90,9 @@ Deno.serve(async (req) => {
         }
       } catch (err) {
         console.error('Error updating credits:', err.message);
+        // Release the claim and ask Stripe to retry so paid credits are never lost
+        if (claimId) await base44.asServiceRole.entities.ProcessedStripeSession.delete(claimId).catch(() => {});
+        return new Response('Retry later', { status: 500 });
       }
     }
   }
