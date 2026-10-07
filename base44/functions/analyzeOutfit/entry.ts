@@ -25,6 +25,9 @@ Deno.serve(async (req) => {
     if (!personImg || !outfitImg || typeof personImg !== 'string' || typeof outfitImg !== 'string') {
       return Response.json({ error: 'Images requises (personImg + outfitImg)' }, { status: 400 });
     }
+    if (!personImg.startsWith('https://') || !outfitImg.startsWith('https://') || personImg.length > 2048 || outfitImg.length > 2048) {
+      return Response.json({ error: 'Images invalides' }, { status: 400 });
+    }
     const outputLang = LANG_NAMES[lang] || 'French';
 
     // ----- 2. VERROU TRANSACTIONNEL (anti-concurrence) -----
