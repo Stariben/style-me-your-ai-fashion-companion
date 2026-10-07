@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
       ? `Bonjour ${safeName},\n\nNous avons bien reçu votre message concernant : "${safeSubject}".\n\nNous vous répondrons dans les plus brefs délais.\n\nL'équipe StyleMe`
       : `Bonjour ${safeName},\n\nNous avons bien reçu votre demande de suppression de compte.\n\nConformément à notre politique de confidentialité, la suppression sera effectuée dans un délai de 30 jours.\n\nL'équipe StyleMe`;
 
-    await base44.integrations.Core.SendEmail({
+    await base44.asServiceRole.integrations.Core.SendEmail({
       to: user.email,
       subject: type === 'contact' ? `[StyleMe] Votre message a bien été reçu` : `[StyleMe] Demande de suppression reçue`,
       body: confirmationBody,
@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
       admins
         .filter((a) => a.email !== user.email)
         .map((admin) =>
-          base44.integrations.Core.SendEmail({
+          base44.asServiceRole.integrations.Core.SendEmail({
             to: admin.email,
             subject: emailSubject,
             body: emailBody,
