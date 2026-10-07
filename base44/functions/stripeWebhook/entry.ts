@@ -49,10 +49,10 @@ Deno.serve(async (req) => {
           }
 
           // Atomic increment (no read-modify-write)
-          await base44.asServiceRole.entities.User.updateMany(
-            { id: user.id },
-            { $inc: { analysis_credits: credits } }
-          );
+          const freshUser = await base44.asServiceRole.entities.User.get(user.id);
+          await base44.asServiceRole.entities.User.update(user.id, {
+            analysis_credits: (freshUser.analysis_credits || 0) + credits,
+          });
           console.log(`Added ${credits} credits to ${userEmail}.`);
         }
       } catch (err) {

@@ -90,15 +90,9 @@ Deno.serve(async (req) => {
     // ----- 4. DÉCOMPTE ATOMIQUE AVANT L'IA (via $inc pour éviter les race conditions) -----
     const useFreeAnalysis = paidCredits === 0;
     if (useFreeAnalysis) {
-      await base44.asServiceRole.entities.User.updateMany(
-        { id: currentUser.id },
-        { $inc: { free_analyses_used: 1 } }
-      );
+      await base44.asServiceRole.entities.User.update(currentUser.id, { free_analyses_used: freeUsed + 1 });
     } else {
-      await base44.asServiceRole.entities.User.updateMany(
-        { id: currentUser.id },
-        { $inc: { analysis_credits: -1 } }
-      );
+      await base44.asServiceRole.entities.User.update(currentUser.id, { analysis_credits: paidCredits - 1 });
     }
 
     // ----- 5. APPELS IA (avec refund si échec) -----
@@ -196,16 +190,11 @@ Describe very specifically: the person's facial features (skin undertone, eye co
     } catch (iaError) {
       // ----- REFUND AUTOMATIQUE SI L'IA ÉCHOUE (via $inc pour préserver les crédits ajoutés concurremment) -----
       console.error('IA failed, refunding credit:', iaError);
+      const latest = await base44.asServiceRole.entities.User.get(currentUser.id);
       if (useFreeAnalysis) {
-        await base44.asServiceRole.entities.User.updateMany(
-          { id: currentUser.id },
-          { $inc: { free_analyses_used: -1 } }
-        );
+        await base44.asServiceRole.entities.User.update(currentUser.id, { free_analyses_used: Math.max(0, (latest.free_analyses_used || 0) - 1) });
       } else {
-        await base44.asServiceRole.entities.User.updateMany(
-          { id: currentUser.id },
-          { $inc: { analysis_credits: 1 } }
-        );
+        await base44.asServiceRole.entities.User.update(currentUser.id, { analysis_credits: (latest.analysis_credits || 0) + 1 });
       }
       // Libérer le verrou après échec IA
       await base44.asServiceRole.entities.AnalysisLock.delete(lock.id);
