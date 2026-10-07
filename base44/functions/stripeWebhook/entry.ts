@@ -48,12 +48,38 @@ Deno.serve(async (req) => {
             return Response.json({ received: true });
           }
 
-          // Atomic increment (no read-modify-write)
-          const freshUser = await base44.asServiceRole.entities.User.get(user.id);
-          await base44.asServiceRole.entities.User.update(user.id, {
-            analysis_credits: (freshUser.analysis_credits || 0) + credits,
-          });
-          console.log(`Added ${credits} credits to ${userEmail}.`);
+          // Per-user lock (same AnalysisLock used by analyzeOutfit) serializes balance writes
+          const LOCK_TTL_MS = 120_000;
+          const locks = base44.asServiceRole.entities.AnalysisLock;
+          let lock = null;
+          for (let attempt = 0; attempt < 20 && !lock; attempt++) {
+            const mine = await locks.create({ user_email: user.email, locked_at: new Date().toISOString() });
+            const all = await locks.filter({ user_email: user.email });
+            const active = (all.items ?? all)
+              .filter((l) => new Date(l.locked_at).getTime() > Date.now() - LOCK_TTL_MS)
+              .sort((a, b) => String(a.created_date).localeCompare(String(b.created_date)) || String(a.id).localeCompare(String(b.id)));
+            if (active[0]?.id === mine.id) {
+              lock = mine;
+            } else {
+              await locks.delete(mine.id).catch(() => {});
+              await new Promise((r) => setTimeout(r, 500));
+            }
+          }
+          if (!lock) {
+            // Release the idempotency claim so Stripe's retry can grant the credits
+            await base44.asServiceRole.entities.ProcessedStripeSession.delete(claim.id).catch(() => {});
+            console.error(`Could not acquire credit lock for ${userEmail}`);
+            return new Response('Retry later', { status: 503 });
+          }
+          try {
+            const freshUser = await base44.asServiceRole.entities.User.get(user.id);
+            await base44.asServiceRole.entities.User.update(user.id, {
+              analysis_credits: (freshUser.analysis_credits || 0) + credits,
+            });
+            console.log(`Added ${credits} credits to ${userEmail}.`);
+          } finally {
+            await locks.delete(lock.id).catch(() => {});
+          }
         }
       } catch (err) {
         console.error('Error updating credits:', err.message);
