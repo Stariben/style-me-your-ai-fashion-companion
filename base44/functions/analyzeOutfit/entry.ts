@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 import { hasAcceptedTerms } from '../../shared/termsConsent.ts';
 import { getCreditsRecord } from '../../shared/credits.ts';
-import { isValidImageRef, toFetchableUrl } from '../../shared/privateFile.ts';
+import { isValidImageRef, toFetchableUrl, privatize } from '../../shared/privateFile.ts';
 
 const FREE_ANALYSES_MAX = 3;
 
@@ -194,9 +194,10 @@ Describe very specifically: the person's facial features (skin undertone, eye co
         ...suggestions.map((s) =>
           base44.asServiceRole.integrations.Core.GenerateImage({
             prompt: `${s.image_prompt || s.name}. Clean e-commerce product photo, single clothing item, plain light background, no text, no watermark, high quality.`,
-          }).then((r) => r?.url || null).catch((e) => { console.error('Suggestion image failed:', e); return null; })
+          }).then((r) => privatize(base44, r?.url)).catch((e) => { console.error('Suggestion image failed:', e); return null; })
         ),
       ]);
+      const generatedUri = await privatize(base44, imageGen.url);
       analysis.suggestions = suggestions.map((s, i) => ({
         name: s.name,
         reason: s.reason || '',
@@ -209,7 +210,7 @@ Describe very specifically: the person's facial features (skin undertone, eye co
         await base44.asServiceRole.entities.AnalysisHistory.create({
           person_image: personImg,
           outfit_image: outfitImg,
-          generated_image: imageGen.url,
+          generated_image: generatedUri,
           match_score: analysis.match_score,
           verdict: analysis.verdict,
           result_json: JSON.stringify(analysis),
@@ -223,7 +224,7 @@ Describe very specifically: the person's facial features (skin undertone, eye co
       await base44.asServiceRole.entities.AnalysisLock.delete(lock.id);
       return Response.json({
         analysis,
-        imageUrl: imageGen.url,
+        imageUrl: generatedUri,
       });
     } catch (iaError) {
       // ----- REFUND AUTOMATIQUE SI L'IA ÉCHOUE (via $inc pour préserver les crédits ajoutés concurremment) -----

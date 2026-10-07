@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 import { hasAcceptedTerms } from '../../shared/termsConsent.ts';
-import { toFetchableUrl } from '../../shared/privateFile.ts';
+import { toFetchableUrl, privatize } from '../../shared/privateFile.ts';
 
 const LANG_NAMES = { fr: 'French', en: 'English', es: 'Spanish', ru: 'Russian', zh: 'Chinese', pt: 'Portuguese' };
 const COOLDOWN_MS = 10 * 60 * 1000;
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
           : `Professional fashion photo of a model who resembles this description: ${rec.model_description || `${saved.skin_tone}, ${saved.hair}, ${saved.body_type}`}. The model is wearing: ${rec.name}. Full or 3/4 body, clean neutral studio background, natural pose, no text, no watermark, high quality.`,
         ...(ref ? { existing_image_urls: [ref] } : {}),
       });
-      rec.image_url = img?.url || null;
+      rec.image_url = await privatize(base44, img?.url);
       await db.StyleProfile.update(existing.id, { profile_json: JSON.stringify(saved) });
       return Response.json({ image_url: rec.image_url });
     }

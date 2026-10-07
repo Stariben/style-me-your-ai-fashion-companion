@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
+import PrivateImg from '@/components/PrivateImg';
 
 export default function SuggestionCard({ suggestion, delay = 0 }) {
   const { t } = useLang();
@@ -17,7 +18,7 @@ export default function SuggestionCard({ suggestion, delay = 0 }) {
     >
       {s.image_url && (
         <div className="aspect-square bg-white/[0.06]">
-          <img src={s.image_url} alt={s.name} className="w-full h-full object-cover" loading="lazy" />
+          <PrivateImg src={s.image_url} alt={s.name} className="w-full h-full object-cover" loading="lazy" />
         </div>
       )}
       <div className="p-3 flex flex-col gap-1.5 flex-1">
