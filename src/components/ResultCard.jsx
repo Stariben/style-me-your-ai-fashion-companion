@@ -85,7 +85,7 @@ export default function ResultCard({ result, generatedImage, personImage, outfit
         {/* Score */}
         <div className="flex flex-col items-center mb-6">
           <ScoreRing score={result.match_score} />
-          <h3 className="text-xl font-extrabold mt-3 bg-gradient-to-r from-primary to-aurora-pink bg-clip-text text-transparent">{result.verdict}</h3>
+          <h3 className="text-xl font-extrabold mt-3 text-center leading-snug text-foreground">{result.verdict}</h3>
         </div>
 
         {/* Pros */}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useLang } from '@/lib/i18n';
@@ -11,12 +12,12 @@ function HistoryItemModal({ item, onClose }) {
   const { t } = useLang();
   let result = {};
   try { result = JSON.parse(item.result_json || '{}'); } catch (_) {}
-  return (
+  return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end"
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end sm:items-center"
       onClick={onClose}
     >
       <motion.div
@@ -24,26 +25,19 @@ function HistoryItemModal({ item, onClose }) {
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 26, stiffness: 300 }}
-        className="bg-background rounded-t-3xl max-h-[90vh] overflow-y-auto"
+        className="bg-background rounded-t-3xl max-h-[90vh] overflow-y-auto w-full max-w-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-background flex items-center justify-between px-6 pt-5 pb-3 border-b border-border">
+        <div className="sticky top-0 z-10 bg-background flex items-center justify-between px-6 pt-5 pb-3 border-b border-border">
           <h2 className="font-bold text-lg">{t('analysisDetails')}</h2>
           <button onClick={onClose} className="h-9 w-9 rounded-full bg-muted flex items-center justify-center">
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="flex gap-3 px-6 pt-5">
-          <div className="flex-1 rounded-2xl overflow-hidden aspect-[3/4] border border-border">
-            <img src={item.person_image} alt="Person" className="w-full h-full object-cover" />
-          </div>
-          <div className="flex-1 rounded-2xl overflow-hidden aspect-[3/4] border border-border">
-            <img src={item.outfit_image} alt="Outfit" className="w-full h-full object-cover" />
-          </div>
-        </div>
-        <ResultCard result={result} generatedImage={item.generated_image} onReset={onClose} />
+        <ResultCard result={result} generatedImage={item.generated_image} personImage={item.person_image} outfitImage={item.outfit_image} onReset={onClose} />
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 }
 
@@ -63,7 +57,7 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
       <div className="text-center">
         <span className={`text-3xl font-bold ${getScoreColor(result.match_score)}`}>{result.match_score}</span>
         <span className="text-xs text-muted-foreground">/10</span>
-        <p className="text-xs font-semibold mt-1 truncate">{result.verdict}</p>
+        <p className="text-xs font-semibold mt-1 leading-snug">{result.verdict}</p>
       </div>
       <div className="rounded-xl overflow-hidden border border-border aspect-[3/4]">
         <img src={item.outfit_image} alt="Outfit" className="w-full h-full object-cover" />
@@ -87,19 +81,19 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
     </div>
   );
 
-  return (
+  return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end"
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end sm:items-center"
     >
       <motion.div
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 26, stiffness: 300 }}
-        className="bg-background rounded-t-3xl max-h-[92vh] overflow-y-auto"
+        className="bg-background rounded-t-3xl max-h-[92vh] overflow-y-auto w-full max-w-3xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-background flex items-center justify-between px-6 pt-5 pb-3 border-b border-border z-10">
@@ -132,7 +126,8 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
           </p>
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 }
 
