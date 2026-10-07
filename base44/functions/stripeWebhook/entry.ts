@@ -26,6 +26,11 @@ Deno.serve(async (req) => {
     const credits = parseInt(session.metadata?.credits || '0');
     const sessionId = session.id;
 
+    // Ignore Base44 merchant self-test charges and unpaid sessions
+    if (session.metadata?.base44_test_checkout === 'true' || session.payment_status !== 'paid') {
+      return Response.json({ received: true });
+    }
+
     if (userEmail && credits > 0) {
       try {
         const base44 = createClientFromRequest(req);
