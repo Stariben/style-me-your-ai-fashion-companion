@@ -36,10 +36,14 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
       return;
     }
 
+    await uploadFile(file);
+  };
+
+  const uploadFile = async (file) => {
     setIsUploading(true);
     try {
-      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
-      onImageUploaded(file_uri);
+      const { data } = await base44.functions.invoke('privateFiles', { file });
+      onImageUploaded(data.file_uri);
     } catch {
       alert(t('photoFormatError'));
     } finally {
@@ -52,15 +56,7 @@ export default function PhotoUploader({ type, imageUrl, onImageUploaded, onClear
 
   const handleCameraCapture = async (file) => {
     closeCamera();
-    setIsUploading(true);
-    try {
-      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
-      onImageUploaded(file_uri);
-    } catch {
-      alert(t('photoFormatError'));
-    } finally {
-      setIsUploading(false);
-    }
+    await uploadFile(file);
   };
 
   const handleGalleryClick = () => {

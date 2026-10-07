@@ -1,0 +1,40 @@
+{
+  "name": "UserFile",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "title": "Owner user ID"
+    },
+    "file_uri": {
+      "type": "string",
+      "title": "Private file URI"
+    }
+  },
+  "required": [
+    "user_id",
+    "file_uri"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

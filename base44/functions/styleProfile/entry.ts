@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
           : `Professional fashion photo of a model who resembles this description: ${rec.model_description || `${saved.skin_tone}, ${saved.hair}, ${saved.body_type}`}. The model is wearing: ${rec.name}. Full or 3/4 body, clean neutral studio background, natural pose, no text, no watermark, high quality.`,
         ...(ref ? { existing_image_urls: [ref] } : {}),
       });
-      rec.image_url = await privatize(base44, img?.url);
+      rec.image_url = await privatize(base44, img?.url, user.id);
       await db.StyleProfile.update(existing.id, { profile_json: JSON.stringify(saved) });
       return Response.json({ image_url: rec.image_url });
     }

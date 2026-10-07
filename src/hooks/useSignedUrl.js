@@ -21,8 +21,8 @@ export default function useSignedUrl(ref) {
     const hit = cache.get(ref);
     if (hit && hit.exp > Date.now()) { setUrl(hit.url); return; }
     let cancelled = false;
-    base44.integrations.Core.CreateFileSignedUrl({ file_uri: ref, expires_in: 3600 })
-      .then(({ signed_url }) => {
+    base44.functions.invoke('privateFiles', { action: 'sign', file_uri: ref })
+      .then(({ data: { signed_url } }) => {
         cache.set(ref, { url: signed_url, exp: Date.now() + CACHE_MS });
         if (!cancelled) setUrl(signed_url);
       })

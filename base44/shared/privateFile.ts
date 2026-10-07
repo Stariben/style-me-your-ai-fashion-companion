@@ -4,13 +4,14 @@ export function isValidImageRef(ref: unknown): ref is string {
 }
 
 // Copies a public image (e.g. an AI result) into private storage and returns its file_uri.
-export async function privatize(base44: any, url: string | null | undefined): Promise<string | null> {
+export async function privatize(base44: any, url: string | null | undefined, userId?: string): Promise<string | null> {
   if (!url) return null;
   if (!url.startsWith('https://')) return url;
   const r = await fetch(url);
   if (!r.ok) throw new Error(`privatize fetch failed: ${r.status}`);
   const file = new File([await r.arrayBuffer()], 'image.png', { type: r.headers.get('content-type') || 'image/png' });
   const up = await base44.asServiceRole.integrations.Core.UploadPrivateFile({ file });
+  if (userId) await base44.asServiceRole.entities.UserFile.create({ user_id: userId, file_uri: up.file_uri });
   return up.file_uri;
 }
 

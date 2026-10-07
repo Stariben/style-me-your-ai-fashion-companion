@@ -3,6 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { hasAcceptedTerms } from '../../shared/termsConsent.ts';
 import { getCreditsRecord } from '../../shared/credits.ts';
 import { isValidImageRef, toFetchableUrl, privatize } from '../../shared/privateFile.ts';
+import { ownsFile } from '../../shared/fileAccess.ts';
 
 const FREE_ANALYSES_MAX = 3;
 
@@ -37,6 +38,12 @@ Deno.serve(async (req) => {
     }
     if (!isValidImageRef(personImg) || !isValidImageRef(outfitImg)) {
       return Response.json({ error: 'Images invalides' }, { status: 400 });
+    }
+    // Private files must belong to the caller (blocks using another user's photo)
+    for (const ref of [personImg, outfitImg]) {
+      if (!ref.startsWith('https://') && !(await ownsFile(base44, user.id, ref))) {
+        return Response.json({ error: 'Images invalides' }, { status: 403 });
+      }
     }
     const outputLang = LANG_NAMES[lang] || 'French';
 
@@ -194,10 +201,10 @@ Describe very specifically: the person's facial features (skin undertone, eye co
         ...suggestions.map((s) =>
           base44.asServiceRole.integrations.Core.GenerateImage({
             prompt: `${s.image_prompt || s.name}. Clean e-commerce product photo, single clothing item, plain light background, no text, no watermark, high quality.`,
-          }).then((r) => privatize(base44, r?.url)).catch((e) => { console.error('Suggestion image failed:', e); return null; })
+          }).then((r) => privatize(base44, r?.url, user.id)).catch((e) => { console.error('Suggestion image failed:', e); return null; })
         ),
       ]);
-      const generatedUri = await privatize(base44, imageGen.url);
+      const generatedUri = await privatize(base44, imageGen.url, user.id);
       analysis.suggestions = suggestions.map((s, i) => ({
         name: s.name,
         reason: s.reason || '',
