@@ -8,7 +8,7 @@ export async function recordOwner(base44: any, userId: string, fileUri: string) 
 export async function ownsFile(base44: any, userId: string, fileUri: string): Promise<boolean> {
   if (typeof fileUri !== 'string' || !fileUri || fileUri.length > 2048) return false;
   const db = base44.asServiceRole.entities;
-  if (items(await db.UserFile.filter({ user_id: userId, file_uri: fileUri }, { limit: 1 })).length > 0) return true;
+  if (items(await db.UserFile.filter({ user_id: userId, file_uri: fileUri })).length > 0) return true;
   // Files created before ownership tracking: owned if they appear in the user's own history / style profile
   const pattern = fileUri.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const hist = items(await db.AnalysisHistory.filter({
@@ -19,8 +19,8 @@ export async function ownsFile(base44: any, userId: string, fileUri: string): Pr
         { result_json: { $regex: pattern } },
       ] },
     ],
-  }, { limit: 1 }));
+  }));
   if (hist.length > 0) return true;
-  const prof = items(await db.StyleProfile.filter({ user_id: userId, profile_json: { $regex: pattern } }, { limit: 1 }));
+  const prof = items(await db.StyleProfile.filter({ user_id: userId, profile_json: { $regex: pattern } }));
   return prof.length > 0;
 }
