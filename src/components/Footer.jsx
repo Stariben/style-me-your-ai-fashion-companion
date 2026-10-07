@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { useLang } from '@/lib/i18n';
+import { getFashionTips } from '@/lib/fashionTipsContent';
 
 const scrollToSection = (id) => {
   const el = document.getElementById(id);
@@ -10,7 +11,7 @@ const scrollToSection = (id) => {
 const LINK = 'text-left text-muted-foreground hover:text-foreground transition-colors min-h-0';
 
 export default function Footer() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   return (
     <footer className="px-5 pb-10 md:px-10">
@@ -39,6 +40,7 @@ export default function Footer() {
 
             <div className="flex flex-col gap-2">
               <p className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-foreground/40">{t('footerSupport')}</p>
+              <Link to="/fashion-tips" className={LINK}>{getFashionTips(lang).title}</Link>
               <Link to="/about" className={LINK}>{t('about')}</Link>
               <Link to="/contact" className={LINK}>{t('contactUs')}</Link>
               <Link to="/privacy" className={LINK}>{t('privacyPolicy')}</Link>

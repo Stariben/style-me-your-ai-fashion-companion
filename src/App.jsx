@@ -12,6 +12,7 @@ import History from './pages/History.jsx';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import FashionTips from './pages/FashionTips';
 import TermsAndConditions from './pages/TermsAndConditions';
 import BottomNav from './components/BottomNav';
 import PageTransition from './components/PageTransition';
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
           <Route path="/terms" element={<PageTransition><TermsAndConditions /></PageTransition>} />
           <Route path="/about" element={<PageTransition><About /></PageTransition>} />
           <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+          <Route path="/fashion-tips" element={<PageTransition><FashionTips /></PageTransition>} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
