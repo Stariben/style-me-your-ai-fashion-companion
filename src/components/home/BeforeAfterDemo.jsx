@@ -23,14 +23,12 @@ export default function BeforeAfterDemo() {
       <div className="relative overflow-hidden rounded-[21px]">
         <img src={DEMO_IMAGE} alt="" className={imgClass} />
         <div
-          className="absolute inset-0 overflow-hidden"
-          style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
-        >
-          <img src={DEMO_IMAGE} alt="" className={`scale-[1.15] blur-md ${imgClass}`} />
-        </div>
+          className="pointer-events-none absolute inset-y-0 left-0 w-1/2 backdrop-blur-md"
+          style={{ opacity: pos / 100 }}
+        />
         <div
-          className="pointer-events-none absolute inset-y-0 w-0.5 -translate-x-1/2 bg-white/80 shadow-[0_0_12px_#f472b6]"
-          style={{ left: `${pos}%`, opacity: pos <= 0 || pos >= 100 ? 0 : 1 }}
+          className="pointer-events-none absolute inset-y-0 right-0 w-1/2 backdrop-blur-md"
+          style={{ opacity: 1 - pos / 100 }}
         />
       </div>
       <div className="flex items-center gap-3.5 px-2.5 pb-2 pt-[17px] text-sm font-bold text-[#eeeaf8]">
