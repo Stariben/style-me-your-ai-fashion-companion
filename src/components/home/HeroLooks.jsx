@@ -1,7 +1,7 @@
 const LOOKS = [
-  { src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80', tag: 'Smart Casual', score: '9.2', delay: '0s' },
-  { src: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=400&q=80', tag: 'Streetwear', score: '8.7', delay: '0.13s' },
-  { src: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80', tag: 'Minimal', score: '9.5', delay: '0.26s' },
+  { src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1000&q=85', tag: 'Smart Casual', score: '9.2', delay: '0s' },
+  { src: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1000&q=85', tag: 'Streetwear', score: '8.7', delay: '0.13s' },
+  { src: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1000&q=85', tag: 'Minimal', score: '9.5', delay: '0.26s' },
 ];
 
 export default function HeroLooks() {
