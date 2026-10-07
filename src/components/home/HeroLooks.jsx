@@ -6,15 +6,15 @@ const LOOKS = [
 
 export default function HeroLooks() {
   return (
-    <div className="mb-16 grid grid-cols-3 gap-3 md:gap-5">
+    <div className="mt-6 mb-20 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:gap-8">
       {LOOKS.map((item) => (
         <article
           key={item.tag}
           className="aurora-rise relative overflow-hidden rounded-[22px] border border-white/[0.13] bg-card shadow-[0_18px_38px_rgba(0,0,0,0.33)]"
           style={{ animationDelay: item.delay }}
         >
-          <img src={item.src} alt="" className="block h-40 w-full object-cover md:h-[290px]" loading="lazy" decoding="async" />
-          <div className="flex items-center justify-between px-3 py-3 text-xs font-bold md:px-[19px] md:py-[17px] md:text-base">
+          <img src={item.src} alt="" className="block aspect-[3/4] w-full object-cover" loading="lazy" decoding="async" />
+          <div className="flex flex-col items-start gap-1 px-3 py-4 text-xs font-bold md:flex-row md:items-center md:justify-between md:gap-3 md:px-6 md:py-6 md:text-base">
             <span>{item.tag}</span>
             <span className="text-amber-300">★ {item.score}</span>
           </div>
