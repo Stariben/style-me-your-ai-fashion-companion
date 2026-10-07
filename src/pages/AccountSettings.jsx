@@ -89,8 +89,8 @@ export default function AccountSettings() {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-28">
-      <div className="px-5 pt-20 pb-6">
+    <div className="min-h-screen pb-32 max-w-3xl mx-auto">
+      <div className="px-5 pt-8 pb-6">
         <h1 className="text-2xl font-black tracking-tight">{t('accountSettings')}</h1>
         <p className="text-sm text-muted-foreground mt-1">{t('manageAccount')}</p>
       </div>
@@ -101,7 +101,7 @@ export default function AccountSettings() {
         animate={{ opacity: 1, y: 0 }}
         className="mx-5 mb-5"
       >
-        <div className="bg-gradient-to-br from-primary/10 to-accent/5 rounded-2xl border border-primary/15 p-5 flex items-center gap-4">
+        <div className="glass bg-gradient-to-br from-primary/15 to-aurora-pink/5 rounded-2xl p-5 flex items-center gap-4">
           <div className="h-14 w-14 rounded-2xl bg-primary/15 flex items-center justify-center shrink-0">
             <UserCircle className="h-8 w-8 text-primary" />
           </div>
@@ -117,7 +117,7 @@ export default function AccountSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="mx-5 bg-card rounded-2xl border border-border overflow-hidden"
+        className="mx-5 glass bg-white/[0.04] rounded-2xl overflow-hidden"
       >
         {menuItems.map(({ icon: MenuIcon, label, onClick }, i) => (
           <button

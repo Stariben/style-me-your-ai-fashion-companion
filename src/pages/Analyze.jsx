@@ -126,7 +126,7 @@ export default function Analyze() {
 
   return (
     <div
-      className="min-h-screen pt-14 pb-24"
+      className="min-h-screen pt-4 pb-32"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -140,7 +140,7 @@ export default function Analyze() {
       <AnimatePresence>{isAnalyzing && <AnalyzingOverlay />}</AnimatePresence>
       <AnimatePresence>{showPaywall && <Paywall onClose={() => setShowPaywall(false)} />}</AnimatePresence>
 
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl lg:max-w-4xl mx-auto">
         {/* Hero text */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}

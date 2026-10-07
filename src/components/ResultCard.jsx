@@ -16,12 +16,17 @@ function ScoreRing({ score }) {
   };
 
   return (
-    <div className="relative w-28 h-28 flex items-center justify-center">
+    <motion.div
+      initial={{ scale: 0.6, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', damping: 14, stiffness: 120, delay: 0.1 }}
+      className="relative w-40 h-40 md:w-48 md:h-48 flex items-center justify-center drop-shadow-[0_0_24px_rgba(140,66,215,0.55)]"
+    >
       <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r={radius} fill="none" stroke="currentColor" strokeWidth="6" className="text-muted/80" />
+        <circle cx="50" cy="50" r={radius} fill="none" stroke="currentColor" strokeWidth="7" className="text-white/10" />
         <motion.circle
           cx="50" cy="50" r={radius}
-          fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round"
+          fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round"
           className={getColor()}
           strokeDasharray={circumference}
           initial={{ strokeDashoffset: circumference }}
@@ -34,13 +39,13 @@ function ScoreRing({ score }) {
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5 }}
-          className={`text-3xl font-bold ${getColor()}`}
+          className={`text-5xl md:text-6xl font-black ${getColor()}`}
         >
           {score}
         </motion.span>
-        <span className="text-[10px] text-muted-foreground font-medium">/10</span>
+        <span className="text-xs text-muted-foreground font-medium">/10</span>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -94,7 +99,7 @@ export default function ResultCard({ result, generatedImage, personImage, outfit
         {/* Score */}
         <div className="flex flex-col items-center mb-6">
           <ScoreRing score={result.match_score} />
-          <h3 className="text-xl font-extrabold mt-3 text-center leading-snug text-foreground">{result.verdict}</h3>
+          <h3 className="text-2xl md:text-3xl font-extrabold mt-4 text-center leading-snug bg-gradient-to-r from-primary to-aurora-pink bg-clip-text text-transparent">{result.verdict}</h3>
         </div>
 
         {/* Pros */}

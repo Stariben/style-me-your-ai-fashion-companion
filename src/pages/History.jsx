@@ -206,8 +206,8 @@ export default function History() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32">
-      <div className="px-6 pt-20 pb-4 flex items-start justify-between">
+    <div className="min-h-screen pb-32 max-w-3xl mx-auto">
+      <div className="px-6 pt-8 pb-4 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t('historyTitle')}</h1>
           <p className="text-sm text-muted-foreground mt-1">{t('historySubtitle')}</p>
@@ -304,9 +304,9 @@ export default function History() {
                 else if (deleteMode) toggleDeleteSelect(item);
                 else setSelected(item);
               }}
-              className={`w-full bg-card border rounded-2xl p-4 flex items-center gap-4 text-left cursor-pointer active:scale-[0.98] transition-all ${
+              className={`w-full glass bg-white/[0.04] border rounded-2xl p-4 flex items-center gap-4 text-left cursor-pointer active:scale-[0.98] transition-all ${
                 deleteMode && isDeleteSelected ? 'border-destructive ring-2 ring-destructive/20' :
-                compareMode && isCompareSelected ? 'border-primary ring-2 ring-primary/20' : 'border-border'
+                compareMode && isCompareSelected ? 'border-primary ring-2 ring-primary/20' : 'border-white/[0.12]'
               } ${compareMode && compareItems.length === 2 && !isCompareSelected ? 'opacity-40' : ''}`}
             >
               {(compareMode || deleteMode) && (

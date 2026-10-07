@@ -26,7 +26,7 @@ export default function BottomNav() {
   ];
 
   return createPortal(
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/50 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_30px_rgba(0,0,0,0.3)] flex"
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/50 backdrop-blur-xl border-t border-white/10 md:left-1/2 md:right-auto md:bottom-4 md:w-[460px] md:-translate-x-1/2 md:rounded-2xl md:border shadow-[0_-8px_30px_rgba(0,0,0,0.3)] flex"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {tabs.map(({ path, label, icon: Icon }) => {
         const active = pathname === path;
