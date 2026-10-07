@@ -146,6 +146,7 @@ Give a highly personalized, specific assessment — NOT generic fashion advice. 
               pros: { type: 'array', items: { type: 'string' }, description: '2-3 positive aspects of this outfit on this person' },
               cons: { type: 'array', items: { type: 'string' }, description: '1-2 things to consider or potential issues' },
               styling_tips: { type: 'array', items: { type: 'string' }, description: '2-3 tips to make this outfit work even better' },
+              suggestions: { type: 'array', items: { type: 'string' }, description: '3-4 specific alternative clothing items, colors or accessories that would suit this particular person very well, based on their skin tone, features and body shape (e.g. "Chemise vert émeraude à col ouvert")' },
               person_description: { type: 'string', description: 'Brief physical description of the person: skin tone, hair color, body type, approximate age range' },
               outfit_description: { type: 'string', description: 'Brief description of the clothing item: type, color, style, fabric if visible' },
             },
