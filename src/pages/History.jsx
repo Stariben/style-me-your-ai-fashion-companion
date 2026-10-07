@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, ChevronRight, X, GitCompare, CheckCircle2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ResultCard from '../components/ResultCard';
+import ImageLightbox from '../components/ImageLightbox';
 
 function HistoryItemModal({ item, onClose }) {
   const { t } = useLang();
@@ -43,6 +44,7 @@ function HistoryItemModal({ item, onClose }) {
 
 function CompareView({ itemA, itemB, onClose, getScoreColor }) {
   const { t } = useLang();
+  const [zoom, setZoom] = useState(null);
   let resultA = {}, resultB = {};
   try { resultA = JSON.parse(itemA.result_json || '{}'); } catch (_) {}
   try { resultB = JSON.parse(itemB.result_json || '{}'); } catch (_) {}
@@ -50,7 +52,7 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
   const ColCard = ({ item, result }) => (
     <div className="flex-1 min-w-0 flex flex-col gap-3">
       {item.generated_image && (
-        <div className="rounded-2xl overflow-hidden border border-border aspect-[3/4]">
+        <div className="rounded-2xl overflow-hidden border border-border aspect-[3/4] cursor-zoom-in" onClick={() => setZoom({ src: item.generated_image, alt: 'AI preview' })}>
           <img src={item.generated_image} alt="AI preview" className="w-full h-full object-cover" />
         </div>
       )}
@@ -59,7 +61,7 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
         <span className="text-xs text-muted-foreground">/10</span>
         <p className="text-xs font-semibold mt-1 leading-snug">{result.verdict}</p>
       </div>
-      <div className="rounded-xl overflow-hidden border border-border aspect-[3/4]">
+      <div className="rounded-xl overflow-hidden border border-border aspect-[3/4] cursor-zoom-in" onClick={() => setZoom({ src: item.outfit_image, alt: 'Outfit' })}>
         <img src={item.outfit_image} alt="Outfit" className="w-full h-full object-cover" />
       </div>
       {result.pros?.length > 0 && (
@@ -105,7 +107,7 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
 
         <div className="px-6 pt-4 pb-2">
           <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">{t('yourLook')}</p>
-          <div className="w-24 mx-auto rounded-2xl overflow-hidden border border-border aspect-[3/4]">
+          <div className="w-24 mx-auto rounded-2xl overflow-hidden border border-border aspect-[3/4] cursor-zoom-in" onClick={() => setZoom({ src: itemA.person_image, alt: 'Person' })}>
             <img src={itemA.person_image} alt="Person" className="w-full h-full object-cover" />
           </div>
         </div>
@@ -126,6 +128,7 @@ function CompareView({ itemA, itemB, onClose, getScoreColor }) {
           </p>
         </div>
       </motion.div>
+      {zoom && <ImageLightbox src={zoom.src} alt={zoom.alt} onClose={() => setZoom(null)} />}
     </motion.div>,
     document.body
   );
