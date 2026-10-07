@@ -73,18 +73,19 @@ const AuthenticatedApp = () => {
           <Route path="/terms" element={<PageTransition><TermsAndConditions /></PageTransition>} />
           <Route path="/about" element={<PageTransition><About /></PageTransition>} />
           <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-          <Route path="/fashion-tips" element={<PageTransition><MobileHeader /><FashionTips /><BottomNav /></PageTransition>} />
+          <Route path="/fashion-tips" element={<PageTransition><FashionTips /></PageTransition>} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-            <Route path="/analyze" element={<PageTransition><MobileHeader /><Analyze /><BottomNav /></PageTransition>} />
-            <Route path="/account" element={<PageTransition><MobileHeader /><AccountSettings /><BottomNav /></PageTransition>} />
-            <Route path="/history" element={<PageTransition><MobileHeader /><History /><BottomNav /></PageTransition>} />
+            <Route path="/analyze" element={<PageTransition><MobileHeader /><Analyze /></PageTransition>} />
+            <Route path="/account" element={<PageTransition><MobileHeader /><AccountSettings /></PageTransition>} />
+            <Route path="/history" element={<PageTransition><MobileHeader /><History /></PageTransition>} />
           </Route>
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </AnimatePresence>
+      <BottomNav />
       </div>
     </NavigationProvider>
   );
