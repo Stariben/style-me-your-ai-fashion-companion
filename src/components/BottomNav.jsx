@@ -1,6 +1,7 @@
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Sparkles, User, Clock } from 'lucide-react';
+import { Sparkles, User, Clock, Lightbulb } from 'lucide-react';
+import { getFashionTips } from '@/lib/fashionTipsContent';
 import { useLang } from '@/lib/i18n';
 import { useCamera } from '@/lib/CameraContext';
 import { useState, useEffect } from 'react';
@@ -9,7 +10,7 @@ import { base44 } from '@/api/base44Client';
 export default function BottomNav() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { isCameraOpen } = useCamera();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -22,6 +23,7 @@ export default function BottomNav() {
   const tabs = [
     { path: '/analyze', label: 'StyleMe', icon: Sparkles },
     { path: '/history', label: t('history'), icon: Clock },
+    { path: '/fashion-tips', label: getFashionTips(lang).nav, icon: Lightbulb },
     { path: '/account', label: t('account'), icon: User },
   ];
 

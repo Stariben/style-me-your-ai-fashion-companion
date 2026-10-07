@@ -1,0 +1,43 @@
+{
+  "name": "StyleProfile",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "profile_json": {
+      "type": "string",
+      "title": "Profile JSON"
+    },
+    "generated_at": {
+      "type": "string",
+      "title": "Generated At (ISO)"
+    }
+  },
+  "required": [
+    "user_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,4 +1,7 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
+import StyleProfileSection from '@/components/tips/StyleProfileSection';
 import { ChevronLeft, Sparkles, Palette, Shirt, Camera } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLang } from '@/lib/i18n';
@@ -10,9 +13,14 @@ export default function FashionTips() {
   const navigate = useNavigate();
   const { lang } = useLang();
   const content = getFashionTips(lang);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    base44.auth.isAuthenticated().then(setIsAuthenticated);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background pb-12">
+    <div className="min-h-screen bg-background pb-28">
       <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/50 flex items-center gap-3 px-5 py-3">
         <button
           onClick={() => navigate(-1)}
@@ -34,6 +42,8 @@ export default function FashionTips() {
         <p className="mb-8 p-5 bg-primary/5 border border-primary/20 rounded-2xl text-sm leading-relaxed">
           {content.intro}
         </p>
+
+        {isAuthenticated && <StyleProfileSection copy={content.profile} />}
 
         <div className="space-y-8 mb-8">
           {content.sections.map((section) => {

@@ -1,6 +1,21 @@
 const fr = {
   title: 'Conseils mode',
   cta: 'Analyser ma tenue',
+  nav: 'Conseils',
+  profile: {
+    heading: 'Mon profil de style',
+    intro: "Construit à partir de vos analyses : ce qui vous va bien, et des idées de vêtements portés par des modèles qui vous ressemblent.",
+    generate: 'Générer mon profil',
+    refresh: 'Mettre à jour mon profil',
+    loading: 'Création de votre profil… cela peut prendre environ une minute.',
+    noHistory: "Faites d'abord une analyse pour créer votre profil.",
+    error: "Impossible de générer le profil pour le moment. Réessayez dans un instant.",
+    traits: { skin_tone: 'Teint', undertone: 'Sous-ton', hair: 'Cheveux', body_type: 'Morphologie', style_vibe: 'Style' },
+    colors: 'Couleurs qui vous vont',
+    cuts: 'Coupes qui vous flattent',
+    avoid: 'À éviter',
+    picks: 'Pour vous',
+  },
   intro: "Quelques bases pour mieux comprendre votre analyse StyleMe et choisir des tenues qui vous mettent en valeur.",
   sections: [
     {
@@ -49,6 +64,21 @@ const fr = {
 const en = {
   title: 'Fashion Tips',
   cta: 'Analyze my outfit',
+  nav: 'Tips',
+  profile: {
+    heading: 'My style profile',
+    intro: 'Built from your analyses: what suits you, plus clothing ideas worn by models who look like you.',
+    generate: 'Generate my profile',
+    refresh: 'Update my profile',
+    loading: 'Creating your profile… this can take about a minute.',
+    noHistory: 'Run an analysis first to create your profile.',
+    error: 'Could not generate your profile right now. Please try again shortly.',
+    traits: { skin_tone: 'Skin tone', undertone: 'Undertone', hair: 'Hair', body_type: 'Body type', style_vibe: 'Style' },
+    colors: 'Colors that suit you',
+    cuts: 'Flattering cuts',
+    avoid: 'Avoid',
+    picks: 'Picked for you',
+  },
   intro: 'A few basics to help you understand your StyleMe analysis and choose outfits that bring out your best.',
   sections: [
     {
