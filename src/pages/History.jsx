@@ -147,7 +147,14 @@ export default function History() {
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['analysis-history'],
-    queryFn: () => base44.entities.AnalysisHistory.list('-created_date', 50),
+    queryFn: async () => {
+      const me = await base44.auth.me();
+      const res = await base44.entities.AnalysisHistory.filter(
+        { $or: [{ user_id: me.id }, { created_by_id: me.id }] },
+        { sort: '-created_date', limit: 50 }
+      );
+      return res.items;
+    },
   });
 
   const getScoreColor = (score) => {
