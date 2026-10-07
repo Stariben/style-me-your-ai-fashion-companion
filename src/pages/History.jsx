@@ -206,7 +206,7 @@ export default function History() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-32">
       <div className="px-6 pt-20 pb-4 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t('historyTitle')}</h1>

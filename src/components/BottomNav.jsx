@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Sparkles, User, Clock } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
@@ -24,7 +25,7 @@ export default function BottomNav() {
     { path: '/account', label: t('account'), icon: User },
   ];
 
-  return (
+  return createPortal(
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/50 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_30px_rgba(0,0,0,0.3)] flex"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {tabs.map(({ path, label, icon: Icon }) => {
@@ -42,6 +43,7 @@ export default function BottomNav() {
           </button>
         );
       })}
-    </nav>
+    </nav>,
+    document.body
   );
 }
