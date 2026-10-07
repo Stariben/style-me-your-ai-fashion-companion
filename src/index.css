@@ -7,24 +7,25 @@
 @layer base {
   :root {
     --font-inter: 'Inter', sans-serif;
-    --background: 30 25% 97%;
-    --foreground: 240 10% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --background: 249 37% 6%;
+    --foreground: 252 100% 98%;
+    --card: 249 25% 10%;
+    --card-foreground: 252 100% 98%;
+    --popover: 249 25% 10%;
+    --popover-foreground: 252 100% 98%;
     --primary: 270 65% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 270 15% 93%;
-    --secondary-foreground: 240 10% 10%;
-    --muted: 270 10% 94%;
-    --muted-foreground: 240 5% 45%;
+    --secondary: 249 20% 16%;
+    --secondary-foreground: 252 100% 98%;
+    --muted: 249 20% 14%;
+    --muted-foreground: 255 12% 68%;
     --accent: 270 70% 60%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 98%;
-    --border: 270 10% 88%;
-    --input: 270 10% 88%;
+    --border: 250 18% 19%;
+    --input: 250 18% 19%;
+    --aurora-pink: 330 87% 70%;
     --ring: 270 65% 55%;
     --chart-1: 270 65% 55%;
     --chart-2: 270 70% 60%;
@@ -86,9 +87,6 @@
     --card-foreground: 252 100% 98%;
     --muted: 249 20% 14%;
     --muted-foreground: 255 12% 68%;
-    --border: 0 0% 100% / 0.12;
-    --input: 0 0% 100% / 0.12;
-    --aurora-pink: 330 87% 70%;
     position: relative;
     isolation: isolate;
     background-color: hsl(var(--background));

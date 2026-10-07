@@ -53,6 +53,7 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <NavigationProvider>
+      <div className="aurora min-h-screen overflow-x-clip">
       <LanguagePicker />
       {isAuthenticated && user && window.location.pathname !== '/' && <TermsConsentModal userId={user.id} />}
       <AnimatePresence mode="wait" initial={false}>
@@ -82,6 +83,7 @@ const AuthenticatedApp = () => {
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </AnimatePresence>
+      </div>
     </NavigationProvider>
   );
 };
