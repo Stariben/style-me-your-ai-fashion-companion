@@ -50,8 +50,18 @@ Deno.serve(async (req) => {
       const rec = saved?.recommendations?.[idx];
       if (!rec) return Response.json({ error: 'Invalid index' }, { status: 400 });
       if (rec.image_url) return Response.json({ image_url: rec.image_url });
+      // Use the user's own most recent photo as the face/body reference
+      const lastHist = items(await db.AnalysisHistory.filter(
+        { $or: [{ user_id: user.id }, { created_by_id: user.id }] },
+        '-created_date',
+        1
+      ))[0];
+      const ref = lastHist?.person_image;
       const img = await base44.asServiceRole.integrations.Core.GenerateImage({
-        prompt: `Professional fashion photo of a model who resembles this description: ${rec.model_description || `${saved.skin_tone}, ${saved.hair}, ${saved.body_type}`}. The model is wearing: ${rec.name}. Full or 3/4 body, clean neutral studio background, natural pose, no text, no watermark, high quality.`,
+        prompt: ref
+          ? `Edit the reference photo: keep this exact same person, with the identical face, facial features, skin tone, hair, facial hair, age and body build, so they are instantly recognizable. Dress them in: ${rec.name}. Full or 3/4 body, clean neutral studio background, natural pose, realistic photography, no text, no watermark, high quality. Do NOT change the face or generate a different person.`
+          : `Professional fashion photo of a model who resembles this description: ${rec.model_description || `${saved.skin_tone}, ${saved.hair}, ${saved.body_type}`}. The model is wearing: ${rec.name}. Full or 3/4 body, clean neutral studio background, natural pose, no text, no watermark, high quality.`,
+        ...(ref ? { existing_image_urls: [ref] } : {}),
       });
       rec.image_url = img?.url || null;
       await db.StyleProfile.update(existing.id, { profile_json: JSON.stringify(saved) });
