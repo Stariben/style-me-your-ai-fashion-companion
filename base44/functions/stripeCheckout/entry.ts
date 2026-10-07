@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
         const parsed = new URL(u);
         if (parsed.protocol !== 'https:') return false;
         return ALLOWED_HOSTS.includes(parsed.hostname) ||
-          (parsed.hostname.startsWith('preview-sandbox--') && parsed.hostname.endsWith('.base44.app'));
+          parsed.hostname === `preview-sandbox--${Deno.env.get("BASE44_APP_ID")}.base44.app`;
       } catch {
         return false;
       }

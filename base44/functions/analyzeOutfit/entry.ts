@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     const outputLang = LANG_NAMES[lang] || 'French';
 
     // ----- 2. VERROU TRANSACTIONNEL (anti-concurrence) -----
-    const LOCK_TTL_MS = 120_000; // 2 minutes max
+    const LOCK_TTL_MS = 600_000; // 10 minutes: longer than the worst-case analysis, so the lock never expires mid-run
     const existingLocks = await base44.asServiceRole.entities.AnalysisLock.filter({ user_email: user.email });
     const activeLock = existingLocks.find(
       (l) => new Date(l.locked_at).getTime() > Date.now() - LOCK_TTL_MS
@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // ----- 4. DÉCOMPTE ATOMIQUE AVANT L'IA (via $inc pour éviter les race conditions) -----
+    // ----- 4. DÉCOMPTE AVANT L'IA (sérialisé par le verrou par utilisateur, TTL > durée max d'analyse) -----
     const useFreeAnalysis = paidCredits === 0;
     if (useFreeAnalysis) {
       await base44.asServiceRole.entities.User.update(currentUser.id, { free_analyses_used: freeUsed + 1 });
