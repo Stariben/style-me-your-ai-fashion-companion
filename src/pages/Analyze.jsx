@@ -33,8 +33,14 @@ export default function Analyze() {
     let cancelled = false;
     let pollTimer = null;
 
+    const fetchCredits = async () => {
+      const me = await base44.auth.me();
+      const res = await base44.entities.UserCredits.filter({ user_id: me.id }, { limit: 1 });
+      return res.items[0] || { analysis_credits: 0, free_analyses_used: 0 };
+    };
+
     const loadUser = async () => {
-      const user = await base44.auth.me();
+      const user = await fetchCredits();
       if (cancelled) return;
       setUserData(user);
 
@@ -44,7 +50,7 @@ export default function Analyze() {
         const poll = async () => {
           if (cancelled) return;
           attempts++;
-          const u = await base44.auth.me();
+          const u = await fetchCredits();
           if (cancelled) return;
           setUserData(u);
           if ((u?.analysis_credits || 0) > creditsBefore) return; // credits updated ✓
@@ -98,8 +104,9 @@ export default function Analyze() {
     onSuccess: async ({ analysis, imageUrl }) => {
       setResult(analysis);
       setGeneratedImage(imageUrl);
-      const updated = await base44.auth.me();
-      setUserData(updated);
+      const me = await base44.auth.me();
+      const res = await base44.entities.UserCredits.filter({ user_id: me.id }, { limit: 1 });
+      setUserData(res.items[0] || { analysis_credits: 0, free_analyses_used: 0 });
     },
     onError: (err) => {
       if (err.message === 'quota_exceeded') return;

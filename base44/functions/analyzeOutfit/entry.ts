@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 import { hasAcceptedTerms } from '../../shared/termsConsent.ts';
+import { getCreditsRecord } from '../../shared/credits.ts';
 
 const FREE_ANALYSES_MAX = 3;
 
@@ -75,8 +76,9 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.AnalysisLock.delete(lock.id);
       return Response.json({ error: 'Utilisateur introuvable' }, { status: 404 });
     }
-    const freeUsed = currentUser.free_analyses_used || 0;
-    const paidCredits = currentUser.analysis_credits || 0;
+    const creditsRec = await getCreditsRecord(base44.asServiceRole.entities, user.id);
+    const freeUsed = creditsRec.free_analyses_used || 0;
+    const paidCredits = creditsRec.analysis_credits || 0;
     const canUse = freeUsed < FREE_ANALYSES_MAX || paidCredits > 0;
 
     if (!canUse) {
@@ -90,9 +92,9 @@ Deno.serve(async (req) => {
     // ----- 4. DÉCOMPTE AVANT L'IA (sérialisé par le verrou par utilisateur, TTL > durée max d'analyse) -----
     const useFreeAnalysis = paidCredits === 0;
     if (useFreeAnalysis) {
-      await base44.asServiceRole.entities.User.update(currentUser.id, { free_analyses_used: freeUsed + 1 });
+      await base44.asServiceRole.entities.UserCredits.update(creditsRec.id, { free_analyses_used: freeUsed + 1 });
     } else {
-      await base44.asServiceRole.entities.User.update(currentUser.id, { analysis_credits: paidCredits - 1 });
+      await base44.asServiceRole.entities.UserCredits.update(creditsRec.id, { analysis_credits: paidCredits - 1 });
     }
 
     // ----- 5. APPELS IA (avec refund si échec) -----
@@ -221,11 +223,11 @@ Describe very specifically: the person's facial features (skin undertone, eye co
     } catch (iaError) {
       // ----- REFUND AUTOMATIQUE SI L'IA ÉCHOUE (via $inc pour préserver les crédits ajoutés concurremment) -----
       console.error('IA failed, refunding credit:', iaError);
-      const latest = await base44.asServiceRole.entities.User.get(currentUser.id);
+      const latest = await base44.asServiceRole.entities.UserCredits.get(creditsRec.id);
       if (useFreeAnalysis) {
-        await base44.asServiceRole.entities.User.update(currentUser.id, { free_analyses_used: Math.max(0, (latest.free_analyses_used || 0) - 1) });
+        await base44.asServiceRole.entities.UserCredits.update(creditsRec.id, { free_analyses_used: Math.max(0, (latest.free_analyses_used || 0) - 1) });
       } else {
-        await base44.asServiceRole.entities.User.update(currentUser.id, { analysis_credits: (latest.analysis_credits || 0) + 1 });
+        await base44.asServiceRole.entities.UserCredits.update(creditsRec.id, { analysis_credits: (latest.analysis_credits || 0) + 1 });
       }
       // Libérer le verrou après échec IA
       await base44.asServiceRole.entities.AnalysisLock.delete(lock.id);

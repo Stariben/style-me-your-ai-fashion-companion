@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import Stripe from 'npm:stripe@14.21.0';
+import { getCreditsRecord } from '../../shared/credits.ts';
 
 Deno.serve(async (req) => {
   const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
@@ -79,9 +80,9 @@ Deno.serve(async (req) => {
             return new Response('Retry later', { status: 503 });
           }
           try {
-            const freshUser = await base44.asServiceRole.entities.User.get(user.id);
-            await base44.asServiceRole.entities.User.update(user.id, {
-              analysis_credits: (freshUser.analysis_credits || 0) + credits,
+            const rec = await getCreditsRecord(base44.asServiceRole.entities, user.id);
+            await base44.asServiceRole.entities.UserCredits.update(rec.id, {
+              analysis_credits: (rec.analysis_credits || 0) + credits,
             });
             console.log(`Added ${credits} credits to ${userEmail}.`);
           } finally {
