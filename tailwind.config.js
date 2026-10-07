@@ -1,6 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-const c = (name) => `hsl(var(--${name}) / <alpha-value>)`;
-
 module.exports = {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
@@ -15,22 +13,35 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)'
       },
       colors: {
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
+        popover: { DEFAULT: 'hsl(var(--popover))', foreground: 'hsl(var(--popover-foreground))' },
+        primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+        secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
+        muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
+        accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
+        destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))' },
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        aurora: { pink: 'hsl(var(--aurora-pink) / <alpha-value>)' },
         chart: {
-          '1': c('chart-1'),
-          '2': c('chart-2'),
-          '3': c('chart-3'),
-          '4': c('chart-4'),
-          '5': c('chart-5')
+          '1': 'hsl(var(--chart-1))',
+          '2': 'hsl(var(--chart-2))',
+          '3': 'hsl(var(--chart-3))',
+          '4': 'hsl(var(--chart-4))',
+          '5': 'hsl(var(--chart-5))'
         },
         sidebar: {
-          DEFAULT: c('sidebar-background'),
-          foreground: c('sidebar-foreground'),
-          primary: c('sidebar-primary'),
-          'primary-foreground': c('sidebar-primary-foreground'),
-          accent: c('sidebar-accent'),
-          'accent-foreground': c('sidebar-accent-foreground'),
-          border: c('sidebar-border'),
-          ring: c('sidebar-ring')
+          DEFAULT: 'hsl(var(--sidebar-background))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+          ring: 'hsl(var(--sidebar-ring))'
         }
       },
       keyframes: {
@@ -54,5 +65,5 @@ module.exports = {
       }
     }
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 }
