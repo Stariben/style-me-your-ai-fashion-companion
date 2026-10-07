@@ -45,13 +45,23 @@ Deno.serve(async (req) => {
     const limit = RATE_LIMITS[type];
     const since = new Date(Date.now() - limit.windowMs).toISOString();
 
+    // Claim-then-verify: record this request first, then count rank among in-window claims
+    const claim = await base44.asServiceRole.entities.ContactRateLimit.create({
+      user_email: user.email,
+      request_type: type,
+      timestamp: new Date().toISOString(),
+    });
     const recent = await base44.asServiceRole.entities.ContactRateLimit.filter({
       user_email: user.email,
       request_type: type,
     });
-    const recentCount = recent.filter((r) => r.timestamp >= since).length;
+    const ordered = recent
+      .filter((r) => r.timestamp >= since)
+      .sort((a, b) => String(a.created_date).localeCompare(String(b.created_date)) || String(a.id).localeCompare(String(b.id)));
+    const rank = ordered.findIndex((r) => r.id === claim.id);
 
-    if (recentCount >= limit.max) {
+    if (rank < 0 || rank >= limit.max) {
+      await base44.asServiceRole.entities.ContactRateLimit.delete(claim.id).catch(() => {});
       const retryAfterMin = Math.ceil(limit.windowMs / 60000);
       return Response.json(
         {
@@ -76,13 +86,6 @@ Deno.serve(async (req) => {
       emailSubject = `[StyleMe] Demande de suppression de compte`;
       emailBody = `Bonjour,\n\nL'utilisateur suivant a demandé la suppression de son compte :\n\nNom : ${safeName}\nEmail : ${safeEmail}\n\nConformément à notre politique de confidentialité, la suppression sera effectuée dans un délai de 30 jours.\n\nStyleMe`;
     }
-
-    // 5. Enregistrer pour le rate limit
-    await base44.asServiceRole.entities.ContactRateLimit.create({
-      user_email: user.email,
-      request_type: type,
-      timestamp: new Date().toISOString(),
-    });
 
     // 6. Envoyer l'email de confirmation à l'utilisateur
     const confirmationBody = type === 'contact'

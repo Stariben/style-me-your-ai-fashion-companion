@@ -18,10 +18,18 @@ Deno.serve(async (req) => {
     if (!pack) return Response.json({ error: 'Pack invalide' }, { status: 400 });
 
     // Anti Open-Redirect: only allow same-origin HTTPS URLs
-    const callerOrigin = req.headers.get('origin');
+    // Server-side allowlist, independent of the client-controlled Origin header
+    const ALLOWED_HOSTS = [
+      'style-me-your-ai-fashion-companio-2945c724.base44.app',
+      'styleia.app',
+      'www.styleia.app',
+    ];
     const isAllowed = (u) => {
       try {
-        return !!callerOrigin && new URL(u).origin === callerOrigin;
+        const parsed = new URL(u);
+        if (parsed.protocol !== 'https:') return false;
+        return ALLOWED_HOSTS.includes(parsed.hostname) ||
+          (parsed.hostname.startsWith('preview-sandbox--') && parsed.hostname.endsWith('.base44.app'));
       } catch {
         return false;
       }
