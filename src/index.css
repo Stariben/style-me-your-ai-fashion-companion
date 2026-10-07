@@ -3,6 +3,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @config "../tailwind.config.js";
+
+/* Restore Tailwind v3 look */
+@theme {
+  --blur-sm: 4px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+@layer base {
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+}
 /* Tailwind v4: @tailwind base; @tailwind components; @tailwind utilities; are replaced by @import "tailwindcss" */
 
 @layer base {
