@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { hasAcceptedTerms } from '../../shared/termsConsent.ts';
 
 // Configuration par type de requête
 const RATE_LIMITS = {
@@ -29,6 +30,11 @@ Deno.serve(async (req) => {
     // 1. Validation du type
     if (type !== 'contact' && type !== 'delete') {
       return Response.json({ error: 'Invalid type' }, { status: 400 });
+    }
+
+    // 1b. Consentement CGU requis côté serveur pour la suppression de compte
+    if (type === 'delete' && !(await hasAcceptedTerms(base44, user.id))) {
+      return Response.json({ error: 'Terms must be accepted', consentRequired: true }, { status: 403 });
     }
 
     // 2. Validation des entrées

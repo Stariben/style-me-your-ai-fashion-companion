@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
+import { hasAcceptedTerms } from '../../shared/termsConsent.ts';
+
 const FREE_ANALYSES_MAX = 3;
 
 const LANG_NAMES = {
@@ -18,6 +20,11 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // ----- 0. CONSENTEMENT CGU (côté serveur) -----
+    if (!(await hasAcceptedTerms(base44, user.id))) {
+      return Response.json({ error: 'Terms must be accepted', consentRequired: true }, { status: 403 });
     }
 
     // ----- 1. VALIDATION DES ENTRÉES -----
