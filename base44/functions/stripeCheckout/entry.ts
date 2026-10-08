@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import Stripe from 'npm:stripe@14.21.0';
+import { grantSessionCredits } from '../../shared/grantCredits.ts';
 
 const PACKS = {
   pack10: { priceId: 'price_1UOHOpE9v6SxdgVst7bz6PTu', credits: 10 },
@@ -13,7 +14,21 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { packId, successUrl, cancelUrl } = await req.json();
+    const { packId, successUrl, cancelUrl, action, sessionId } = await req.json();
+
+    // Post-payment confirmation: verify the session with Stripe and grant credits once (idempotent with the webhook)
+    if (action === 'confirm') {
+      if (typeof sessionId !== 'string' || !sessionId.startsWith('cs_')) {
+        return Response.json({ error: 'Session invalide' }, { status: 400 });
+      }
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      if (session.metadata?.user_email !== user.email) {
+        return Response.json({ error: 'Forbidden' }, { status: 403 });
+      }
+      const result = await grantSessionCredits(base44, session);
+      return Response.json({ result, paid: session.payment_status === 'paid' });
+    }
+
     const pack = PACKS[packId];
     if (!pack) return Response.json({ error: 'Pack invalide' }, { status: 400 });
 
@@ -42,7 +57,7 @@ Deno.serve(async (req) => {
       payment_method_types: ['card'],
       line_items: [{ price: pack.priceId, quantity: 1 }],
       mode: 'payment',
-      success_url: successUrl,
+      success_url: `${successUrl}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl,
       customer_email: user.email,
       metadata: {

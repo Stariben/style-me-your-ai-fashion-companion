@@ -4,6 +4,7 @@ import { useLang } from '@/lib/i18n';
 import { Sparkles, RefreshCw } from 'lucide-react';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 import { base44 } from '@/api/base44Client';
+import { toast } from '@/components/ui/use-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import PhotoUploader from '../components/PhotoUploader';
@@ -26,8 +27,12 @@ export default function Analyze() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const isPaymentSuccess = params.get('payment') === 'success';
-    if (isPaymentSuccess) {
+    const stripeSessionId = params.get('session_id');
+    if (params.get('payment')) {
       window.history.replaceState({}, '', window.location.pathname);
+    }
+    if (params.get('payment') === 'cancel') {
+      toast({ title: t('paymentCancelTitle'), description: t('paymentCancelDesc') });
     }
 
     let cancelled = false;
@@ -45,6 +50,13 @@ export default function Analyze() {
       setUserData(user);
 
       if (isPaymentSuccess) {
+        toast({ title: t('paymentSuccessTitle'), description: t('paymentSuccessDesc') });
+        // Verify the payment with Stripe and grant the credits (idempotent with the webhook)
+        if (stripeSessionId) {
+          await base44.functions.invoke('stripeCheckout', { action: 'confirm', sessionId: stripeSessionId }).catch(() => {});
+          if (cancelled) return;
+          setUserData(await fetchCredits());
+        }
         let attempts = 0;
         const creditsBefore = user?.analysis_credits || 0;
         const poll = async () => {
