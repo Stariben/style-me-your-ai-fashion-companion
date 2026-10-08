@@ -2,8 +2,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import Stripe from 'npm:stripe@14.21.0';
 
 const PACKS = {
-  pack10: { priceId: 'price_1TY8H2E9v6SxdgVsBiQNYICn', credits: 10 },
-  pack50: { priceId: 'price_1TY8H2E9v6SxdgVsjkoC1T2W', credits: 50 },
+  pack10: { priceId: 'price_1UOHOpE9v6SxdgVst7bz6PTu', credits: 10 },
+  pack50: { priceId: 'price_1UOHUFE9v6SxdgVsOUw8RAuD', credits: 50 },
 };
 
 Deno.serve(async (req) => {
