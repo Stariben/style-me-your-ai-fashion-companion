@@ -1,0 +1,78 @@
+{
+  "name": "BrandProduct",
+  "type": "object",
+  "properties": {
+    "brand_id": {
+      "type": "string",
+      "title": "Brand ID"
+    },
+    "external_id": {
+      "type": "string",
+      "title": "Shop product ID"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Main image URL"
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Image URLs"
+    },
+    "price": {
+      "type": "number",
+      "title": "Lowest price"
+    },
+    "currency": {
+      "type": "string",
+      "title": "Currency"
+    },
+    "product_url": {
+      "type": "string",
+      "title": "Purchase URL"
+    },
+    "available": {
+      "type": "boolean",
+      "title": "Available",
+      "default": true
+    },
+    "variants_json": {
+      "type": "string",
+      "title": "Variants JSON"
+    }
+  },
+  "required": [
+    "brand_id",
+    "external_id",
+    "title",
+    "image_url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

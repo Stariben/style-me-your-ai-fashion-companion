@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Analyze from './pages/Analyze';
 import AccountSettings from './pages/AccountSettings';
 import History from './pages/History.jsx';
+import BrandDashboard from './pages/BrandDashboard';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -80,6 +81,7 @@ const AuthenticatedApp = () => {
             <Route path="/analyze" element={<PageTransition><MobileHeader /><Analyze /></PageTransition>} />
             <Route path="/account" element={<PageTransition><MobileHeader /><AccountSettings /></PageTransition>} />
             <Route path="/history" element={<PageTransition><MobileHeader /><History /></PageTransition>} />
+            <Route path="/brand" element={<PageTransition><MobileHeader /><BrandDashboard /></PageTransition>} />
           </Route>
 
           <Route path="*" element={<PageNotFound />} />

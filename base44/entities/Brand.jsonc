@@ -1,0 +1,101 @@
+{
+  "name": "Brand",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "title": "Owner user ID"
+    },
+    "name": {
+      "type": "string",
+      "title": "Brand name"
+    },
+    "platform": {
+      "type": "string",
+      "title": "E-commerce platform",
+      "default": "shopify"
+    },
+    "shop_domain": {
+      "type": "string",
+      "title": "Shop myshopify domain"
+    },
+    "store_url": {
+      "type": "string",
+      "title": "Public store URL"
+    },
+    "currency": {
+      "type": "string",
+      "title": "Currency"
+    },
+    "shop_token": {
+      "type": "string",
+      "title": "Shop Admin API token (server only)"
+    },
+    "sync_status": {
+      "type": "string",
+      "title": "Sync status",
+      "default": "idle"
+    },
+    "sync_error": {
+      "type": "string",
+      "title": "Sync error"
+    },
+    "last_synced_at": {
+      "type": "string",
+      "title": "Last sync (ISO)"
+    },
+    "product_count": {
+      "type": "number",
+      "title": "Imported products",
+      "default": 0
+    },
+    "monthly_quota": {
+      "type": "number",
+      "title": "Monthly try-on quota",
+      "default": 100
+    },
+    "retention_days": {
+      "type": "number",
+      "title": "Result retention (days)",
+      "default": 30
+    },
+    "api_key_hash": {
+      "type": "string",
+      "title": "API key SHA-256"
+    },
+    "api_key_prefix": {
+      "type": "string",
+      "title": "API key prefix"
+    },
+    "key_created_at": {
+      "type": "string",
+      "title": "API key created (ISO)"
+    }
+  },
+  "required": [
+    "owner_id",
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

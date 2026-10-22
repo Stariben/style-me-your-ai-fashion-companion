@@ -1,0 +1,61 @@
+{
+  "name": "TryOnJob",
+  "type": "object",
+  "properties": {
+    "brand_id": {
+      "type": "string",
+      "title": "Brand ID"
+    },
+    "product_external_id": {
+      "type": "string",
+      "title": "Shop product ID"
+    },
+    "product_title": {
+      "type": "string",
+      "title": "Product title"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "default": "processing"
+    },
+    "result_uri": {
+      "type": "string",
+      "title": "Private result file URI"
+    },
+    "error": {
+      "type": "string",
+      "title": "Error"
+    },
+    "expires_at": {
+      "type": "string",
+      "title": "Result expiry (ISO)"
+    }
+  },
+  "required": [
+    "brand_id",
+    "product_external_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
