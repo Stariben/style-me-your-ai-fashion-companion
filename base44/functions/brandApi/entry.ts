@@ -56,7 +56,8 @@ export default async function (req: Request) {
       if (!product) return Response.json({ error: 'Article introuvable' }, { status: 404 });
       if (!product.available) return Response.json({ error: 'Article indisponible' }, { status: 409 });
 
-      const used = await db.TryOnJob.count({ brand_id: brand.id, status: { $ne: 'failed' }, created_date: { $gte: monthStartIso() } });
+      // Failed attempts count too: they still cost an AI generation, so retries can't bypass the quota
+      const used = await db.TryOnJob.count({ brand_id: brand.id, created_date: { $gte: monthStartIso() } });
       if (used >= (brand.monthly_quota ?? 100)) return Response.json({ error: 'Quota mensuel atteint' }, { status: 429 });
 
       let personUrl = personImage;

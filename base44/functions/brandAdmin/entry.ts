@@ -84,7 +84,7 @@ export default async function (req: Request) {
     if (!brand) return Response.json({ error: 'Créez d\'abord votre espace marque' }, { status: 404 });
 
     if (action === 'get') {
-      const used = await db.TryOnJob.count({ brand_id: brand.id, status: { $ne: 'failed' }, created_date: { $gte: monthStartIso() } });
+      const used = await db.TryOnJob.count({ brand_id: brand.id, created_date: { $gte: monthStartIso() } });
       return Response.json({ brand: publicBrand(brand), usage: { used, quota: brand.monthly_quota ?? 100 } });
     }
 
